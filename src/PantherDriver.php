@@ -19,6 +19,7 @@ use Facebook\WebDriver\Internal\WebDriverLocatable;
 use Facebook\WebDriver\WebDriverDimension;
 use Facebook\WebDriver\WebDriverElement;
 use Facebook\WebDriver\WebDriverHasInputDevices;
+use Facebook\WebDriver\WebDriverKeys;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\BrowserKit\Response;
 use Symfony\Component\DomCrawler\Field\FormField;
@@ -29,7 +30,6 @@ use Symfony\Component\Panther\DomCrawler\Field\FileFormField;
 use Symfony\Component\Panther\DomCrawler\Field\InputFormField;
 use Symfony\Component\Panther\DomCrawler\Field\TextareaFormField;
 use Symfony\Component\Panther\DomCrawler\Form;
-use Symfony\Component\Panther\DomCrawler\Link;
 use Symfony\Component\Panther\PantherTestCaseTrait;
 
 /**
@@ -348,6 +348,47 @@ class PantherDriver extends CoreDriver
     /**
      * {@inheritdoc}
      */
+    public function focus($xpath)
+    {
+        $this->client->getMouse()->click($this->toCoordinates($xpath));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function keyPress($xpath, $char, $modifier = null)
+    {
+        $webDriverActions = $this->getWebDriverActions();
+        $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
+        $key = $this->geWebDriverKeyValue($char, $modifier);
+        $webDriverActions->sendKeys($element, $key.WebDriverKeys::NULL)->perform();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function keyDown($xpath, $char, $modifier = null)
+    {
+        $webDriverActions = $this->getWebDriverActions();
+        $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
+        $key = $this->geWebDriverKeyValue($char, $modifier);
+        $webDriverActions->keyDown($element, $key.WebDriverKeys::NULL)->perform();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function keyUp($xpath, $char, $modifier = null)
+    {
+        $webDriverActions = $this->getWebDriverActions();
+        $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
+        $key = $this->geWebDriverKeyValue($char, $modifier);
+        $webDriverActions->keyUp($element, $key)->perform();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isSelected($xpath)
     {
         return $this->getCrawlerElement($this->getFilteredCrawler($xpath))->isSelected();
@@ -564,11 +605,7 @@ class PantherDriver extends CoreDriver
      */
     public function dragTo($sourceXpath, $destinationXpath)
     {
-        $webDriver = $this->client->getWebDriver();
-        if (!$webDriver instanceof WebDriverHasInputDevices) {
-            throw new UnsupportedDriverActionException('Mouse manipulations are not supported by %s', $this);
-        }
-        $webDriverActions = new WebDriverActions($webDriver);
+        $webDriverActions = $this->getWebDriverActions();
         $source = $this->getCrawlerElement($this->getFilteredCrawler($sourceXpath));
         $target = $this->getCrawlerElement($this->getFilteredCrawler($destinationXpath));
         $webDriverActions->dragAndDrop($source, $target)->perform();
@@ -859,5 +896,38 @@ class PantherDriver extends CoreDriver
         }
 
         return $element->getCoordinates();
+    }
+
+    private function getWebDriverActions(): WebDriverActions
+    {
+        $webDriver = $this->client->getWebDriver();
+        if (!$webDriver instanceof WebDriverHasInputDevices) {
+            throw new UnsupportedDriverActionException('Mouse manipulations are not supported by %s', $this);
+        }
+        $webDriverActions = new WebDriverActions($webDriver);
+
+        return $webDriverActions;
+    }
+
+    private function geWebDriverKeyValue($char, $modifier = null)
+    {
+        if (\is_int($char)) {
+            $char = \strtolower(\chr($char));
+        }
+
+        switch ($modifier) {
+            case 'alt':
+                return WebDriverKeys::ALT.$char;
+            case 'ctrl':
+                return WebDriverKeys::CONTROL.$char;
+            case 'shift':
+                return WebDriverKeys::SHIFT.$char;
+            case 'meta':
+                return WebDriverKeys::META.$char;
+            case null:
+            default:
+                return $char;
+                break;
+        }
     }
 }
