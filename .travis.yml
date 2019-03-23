@@ -1,0 +1,38 @@
+language: php
+
+sudo: false
+
+php: [7.1, 7.2]
+
+matrix:
+  include:
+    # Test against LTS versions
+    - php: 7.2
+      env: SYMFONY_VERSION='^2'
+    - php: 7.2
+      env: SYMFONY_VERSION='^3'
+    # Test against dev versions of dependencies
+    - php: 7.2
+      env: DEPENDENCIES='dev'
+
+cache:
+  directories:
+    - $HOME/.composer/cache/files
+
+before_install:
+  - if [ "$DEPENDENCIES" = "dev" ]; then composer config minimum-stability dev; fi;
+  - sh -c 'if [ "$SYMFONY_VERSION" != "" ]; then composer require -n --no-update symfony/lts=$SYMFONY_VERSION; fi;'
+
+install:
+  - composer install -n
+  # Start a webserver for web fixtures.
+  - vendor/bin/mink-test-server > /dev/null 2>&1 &
+
+script: vendor/bin/phpunit -v --coverage-clover=coverage.clover
+
+after_script:
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+
+after_failure:
+  - cat /tmp/webdriver_output.txt
