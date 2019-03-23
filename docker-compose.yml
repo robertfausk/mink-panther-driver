@@ -1,0 +1,11 @@
+version: "3"
+services:
+
+  php7.2:
+    tty: true
+    build:
+      context: .
+      args:
+        - PHP_VERSION=7.2
+    volumes:
+      - .:/var/www/html
