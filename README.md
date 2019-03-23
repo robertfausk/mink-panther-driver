@@ -48,9 +48,19 @@ Since MinkPantherDriver is just glue between Mink and Symfony Panther, it alread
 * For `symfony/panther`, read [Panther's documentation](https://github.com/symfony/panther)
 * For usage with `Behat`, read [Behat's documentation](http://behat.org/en/latest/guides.html)
 
+## How to contribute
+
+Start docker-compose with php web driver
+
+    docker-composer up php7.2
+
+Run phpunit tests
+
+    docker-composer exec php7.2 vendor/bin/phpunit
+
 ## Credits
 
-Created by obert Freigang [robertfausk](https://github.com/robertfausk).
+Created by Robert Freigang [robertfausk](https://github.com/robertfausk).
 
 MinkPantherDriver is built on top of [Panther](https://github.com/symfony/panther) and for usage with [Behat and Mink](http://behat.org/en/latest/cookbooks/integrating_symfony2_with_behat.html#initialising-behat). 
 It has been inspired by [MinkBrowserKitDriver](https://github.com/minkphp/MinkBrowserKitDriver) and [MinkSelenium2Driver](https://github.com/minkphp/MinkSelenium2Driver).
