@@ -409,6 +409,8 @@ class PantherDriver extends CoreDriver
             $value = $formField->getValue();
             if ('' === $value && $formField instanceof ChoiceFormField) {
                 $value = null;
+            } elseif ($formField instanceof ChoiceFormField && !$formField->hasValue()) {
+                $value = null;
             }
         } catch (DriverException $e) {
             $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
