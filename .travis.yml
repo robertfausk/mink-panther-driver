@@ -8,6 +8,9 @@ sudo: false
 php: [7.1, 7.2]
 
 matrix:
+  allow_failures:
+      - env: DEPENDENCIES='dev'
+  fast_finish: true
   include:
       # Test against dev versions of dependencies
     - php: 7.2
