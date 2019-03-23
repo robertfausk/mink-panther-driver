@@ -29,8 +29,7 @@
             <!--<file>vendor/mink/driver-testsuite/tests/Basic/StatusCodeTest.php</file>-->
             <file>vendor/mink/driver-testsuite/tests/Basic/TraversingTest.php</file>
             <file>vendor/mink/driver-testsuite/tests/Basic/VisibilityTest.php</file>
-            <!--no WebDriverCoordinates available atm-->
-            <!--<directory>vendor/mink/driver-testsuite/tests/Css</directory>-->
+            <directory>vendor/mink/driver-testsuite/tests/Css</directory>
             <file>vendor/mink/driver-testsuite/tests/Form/CheckboxTest.php</file>
 
             <!--quoteInValue-->

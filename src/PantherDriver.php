@@ -12,7 +12,8 @@ declare(strict_types=1);
 namespace Behat\Mink\Driver;
 
 use Behat\Mink\Exception\DriverException;
-use Behat\Mink\Exception\UnsupportedDriverActionException;
+use Facebook\WebDriver\Interactions\Internal\WebDriverCoordinates;
+use Facebook\WebDriver\Internal\WebDriverLocatable;
 use Facebook\WebDriver\WebDriverElement;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\BrowserKit\Response;
@@ -308,6 +309,14 @@ class PantherDriver extends CoreDriver
     }
 
     /**
+     * {@inheritdoc}.
+     */
+    public function mouseOver($xpath)
+    {
+        $this->client->getMouse()->mouseMove($this->toCoordinates($xpath));
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function isSelected($xpath)
@@ -386,27 +395,18 @@ class PantherDriver extends CoreDriver
      */
     public function getValue($xpath)
     {
-        $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
-        $type = $this->getAttribute($xpath, 'type');
-        if (in_array($type, array('submit', 'image', 'button'), true)) {
-            return $element->getAttribute('value');
+        try {
+            $formField = $this->getFormField($xpath);
+            $value = $formField->getValue();
+            if ('' === $value && $formField instanceof ChoiceFormField) {
+                $value = null;
+            }
+        } catch (DriverException $e) {
+            $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
+            $value = $element->getAttribute('value');
         }
 
-        if ('checkbox' === $type) {
-            $isChecked = $element->getAttribute('checked');
-
-            return $isChecked ? $element->getAttribute('value') : null;
-        }
-
-        if ('option' === $element->getTagName()) {
-            return $this->getOptionValue($element);
-        }
-
-        if ('input' === $element->getTagName()) {
-            return $this->getOptionValue($element);
-        }
-
-        return $element->getAttribute('value');
+         return $value;
     }
 
     /**
@@ -414,11 +414,13 @@ class PantherDriver extends CoreDriver
      */
     public function setValue($xpath, $value)
     {
-        $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
-        $element->clear();
-
-        $formField = $this->getFormField($xpath);
-        $formField->setValue($value);
+        try {
+            $formField = $this->getFormField($xpath);
+            $formField->setValue($value);
+        } catch (DriverException $e) {
+            $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
+            $element->sendKeys($value);
+        }
     }
 
     /**
@@ -491,6 +493,22 @@ class PantherDriver extends CoreDriver
     /**
      * {@inheritdoc}
      */
+    public function doubleClick($xpath)
+    {
+        $this->client->getMouse()->doubleClick($this->toCoordinates($xpath));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function rightClick($xpath)
+    {
+        $this->client->getMouse()->contextClick($this->toCoordinates($xpath));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isChecked($xpath)
     {
         $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
@@ -520,6 +538,43 @@ class PantherDriver extends CoreDriver
         }
 
         $field->upload($path);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function executeScript($script)
+    {
+        return $this->client->executeScript($script);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function evaluateScript($script)
+    {
+        if (0 !== \strpos(trim($script), 'return ')) {
+            $script = 'return ' . $script;
+        }
+
+        return $this->client->executeScript($script);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function wait($timeout, $condition)
+    {
+        $script = "return $condition;";
+        $start = microtime(true);
+        $end = $start + $timeout / 1000.0;
+
+        do {
+            $result = $this->evaluateScript($script);
+            \usleep(100000);
+        } while (\microtime(true) < $end && !$result);
+
+        return (bool) $result;
     }
 
     /**
@@ -617,7 +672,7 @@ class PantherDriver extends CoreDriver
         try {
             $choiceFormField = new ChoiceFormField($element);
         } catch (\LogicException $e) {
-            throw new DriverException(sprintf('Impossible to check the element with XPath "%s" as it is not a checkbox', $xpath));
+            throw new DriverException(sprintf('Impossible to check the element with XPath "%s" as it is not a choice form field.', $xpath));
         }
 
         return $choiceFormField;
@@ -638,7 +693,7 @@ class PantherDriver extends CoreDriver
         try {
             $inputFormField = new InputFormField($element);
         } catch (\LogicException $e) {
-            throw new DriverException(sprintf('Impossible to check the element with XPath "%s" as it is not a checkbox', $xpath));
+            throw new DriverException(sprintf('Impossible to check the element with XPath "%s" as it is not an input form field.', $xpath));
         }
 
         return $inputFormField;
@@ -659,7 +714,7 @@ class PantherDriver extends CoreDriver
         try {
             $fileFormField = new FileFormField($element);
         } catch (\LogicException $e) {
-            throw new DriverException(sprintf('Impossible to check the element with XPath "%s" as it is not a checkbox', $xpath));
+            throw new DriverException(sprintf('Impossible to check the element with XPath "%s" as it is not a file form field.', $xpath));
         }
 
         return $fileFormField;
@@ -680,166 +735,10 @@ class PantherDriver extends CoreDriver
         try {
             $textareaFormField = new TextareaFormField($element);
         } catch (\LogicException $e) {
-            throw new DriverException(sprintf('Impossible to check the element with XPath "%s" as it is not a checkbox', $xpath));
+            throw new DriverException(sprintf('Impossible to check the element with XPath "%s" as it is not a textarea.', $xpath));
         }
 
         return $textareaFormField;
-    }
-
-    /**
-     * Gets the position of the field node among elements with the same name
-     *
-     * BrowserKit uses the field name as index to find the field in its Form object.
-     * When multiple fields have the same name (checkboxes for instance), it will return
-     * an array of elements in the order they appear in the DOM.
-     *
-     * @param \DOMElement $fieldNode
-     *
-     * @return integer
-     */
-    private function getFieldPosition(\DOMElement $fieldNode)
-    {
-        $elements = $this->getCrawler()->filterXPath('//*[@name=\''.$fieldNode->getAttribute('name').'\']');
-
-        if (count($elements) > 1) {
-            // more than one element contains this name !
-            // so we need to find the position of $fieldNode
-            foreach ($elements as $key => $element) {
-                /** @var \DOMElement $element */
-                if ($element->getNodePath() === $fieldNode->getNodePath()) {
-                    return $key;
-                }
-            }
-        }
-
-        return 0;
-    }
-
-    private function submit(Form $form)
-    {
-        $formId = $this->getFormNodeId($form);
-
-        if (isset($this->forms[$formId])) {
-            $this->mergeForms($form, $this->forms[$formId]);
-        }
-
-        // remove empty file fields from request
-        foreach ($form->getFiles() as $name => $field) {
-            if (empty($field['name']) && empty($field['tmp_name'])) {
-                $form->remove($name);
-            }
-        }
-
-        foreach ($form->all() as $field) {
-            // Add a fix for https://github.com/symfony/symfony/pull/10733 to support Symfony versions which are not fixed
-            if ($field instanceof TextareaFormField && null === $field->getValue()) {
-                $field->setValue('');
-            }
-        }
-
-        $this->client->submit($form);
-
-        $this->forms = array();
-    }
-
-    private function resetForm(WebDriverElement $element): void
-    {
-        $formId = $this->getFormNodeId($element);
-        unset($this->forms[$formId]);
-    }
-
-    /**
-     * Determines if an element can submit a form.
-     *
-     * @param WebDriverElement $element
-     *
-     * @return bool
-     */
-    private function canSubmitForm(WebDriverElement $element): bool
-    {
-        $type = $element->getAttribute('type');
-
-        if ('input' === $element->getTagName() && in_array($type, array('submit', 'image'), true)) {
-            return true;
-        }
-
-        return 'button' === $element->getTagName() && (null === $type || 'submit' === $type);
-    }
-
-    /**
-     * Determines if a node can reset a form.
-     *
-     * @param WebDriverElement $element
-     *
-     * @return bool
-     */
-    private function canResetForm(WebDriverElement $element): bool
-    {
-        $type = $element->getAttribute('type');
-
-        return in_array($element->getTagName(), array('input', 'button'), true) && 'reset' === $type;
-    }
-
-    /**
-     * Returns form node unique identifier.
-     *
-     * @param WebDriverElement $form
-     *
-     * @return string
-     */
-    private function getFormNodeId(WebDriverElement $form): string
-    {
-        return \md5($form->getID());
-    }
-
-    /**
-     * Gets the value of an option element
-     *
-     * @param WebDriverElement $option
-     *
-     * @return string
-     *
-     * @see \Symfony\Component\DomCrawler\Field\ChoiceFormField::buildOptionValue
-     */
-    private function getOptionValue(WebDriverElement $option): string
-    {
-        $value = $option->getAttribute('value');
-        if ($value) {
-            return $value;
-        }
-
-        throw new UnsupportedDriverActionException('Can not get value from option', $this);
-
-        // if (!empty($option->nodeValue)) {
-        //     return $option->nodeValue;
-        // }
-        //
-        // return '1'; // DomCrawler uses 1 by default if there is no text in the option
-    }
-
-    /**
-     * Merges second form values into first one.
-     *
-     * @param Form $to   merging target
-     * @param Form $from merging source
-     */
-    private function mergeForms(Form $to, Form $from): void
-    {
-        foreach ($from->all() as $name => $field) {
-            $fieldReflection = new \ReflectionObject($field);
-            $nodeReflection = $fieldReflection->getProperty('node');
-            $valueReflection = $fieldReflection->getProperty('value');
-
-            $nodeReflection->setAccessible(true);
-            $valueReflection->setAccessible(true);
-
-            $isIgnoredField = $field instanceof InputFormField &&
-                in_array($nodeReflection->getValue($field)->getAttribute('type'), array('submit', 'button', 'image'), true);
-
-            if (!$isIgnoredField) {
-                $valueReflection->setValue($to[$name], $valueReflection->getValue($field));
-            }
-        }
     }
 
     /**
@@ -896,5 +795,18 @@ class PantherDriver extends CoreDriver
         }
 
         return $crawler;
+    }
+
+    private function toCoordinates(string $xpath): WebDriverCoordinates
+    {
+        $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
+
+        if (!$element instanceof WebDriverLocatable) {
+            throw new \RuntimeException(
+                sprintf('The element of "%s" xpath selector does not implement "%s".', $xpath, WebDriverLocatable::class)
+            );
+        }
+
+        return $element->getCoordinates();
     }
 }
