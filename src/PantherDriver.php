@@ -387,7 +387,7 @@ class PantherDriver extends CoreDriver
 
         $attribute = $this->getCrawlerElement($crawler)->getAttribute($name);
 
-        return $attribute === '' ? null : $attribute;
+        return $attribute;
     }
 
     /**
