@@ -14,6 +14,7 @@ namespace Behat\Mink\Driver;
 use Behat\Mink\Exception\DriverException;
 use Facebook\WebDriver\Interactions\Internal\WebDriverCoordinates;
 use Facebook\WebDriver\Internal\WebDriverLocatable;
+use Facebook\WebDriver\WebDriverDimension;
 use Facebook\WebDriver\WebDriverElement;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\BrowserKit\Response;
@@ -207,6 +208,15 @@ class PantherDriver extends CoreDriver
     /**
      * {@inheritdoc}
      */
+    public function switchToWindow($name = null)
+    {
+        $this->client->switchTo()->window($name);
+        $this->client->refreshCrawler();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function switchToIFrame($name = null)
     {
         if (null === $name) {
@@ -298,6 +308,22 @@ class PantherDriver extends CoreDriver
     public function getScreenshot($saveAs = null): string
     {
         return $this->client->takeScreenshot($saveAs);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getWindowNames()
+    {
+        return $this->client->getWindowHandles();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getWindowName()
+    {
+        return $this->client->getWindowHandle();
     }
 
     /**
@@ -586,6 +612,23 @@ class PantherDriver extends CoreDriver
         } while (\microtime(true) < $end && !$result);
 
         return (bool) $result;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resizeWindow($width, $height, $name = null)
+    {
+        $size = new WebDriverDimension($width, $height);
+        $this->client->getWebDriver()->manage()->window()->setSize($size);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function maximizeWindow($name = null)
+    {
+        $this->client->getWebDriver()->manage()->window()->maximize();
     }
 
     /**

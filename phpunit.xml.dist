@@ -41,7 +41,7 @@
             <!--<file>vendor/mink/driver-testsuite/tests/Js/EventsTest.php</file>-->
             <!--<file>vendor/mink/driver-testsuite/tests/Js/JavascriptEvaluationTest.php</file>-->
             <!--<file>vendor/mink/driver-testsuite/tests/Js/JavascriptTest.php</file>-->
-            <!--<file>vendor/mink/driver-testsuite/tests/Js/WindowTest.php</file>-->
+            <file>vendor/mink/driver-testsuite/tests/Js/WindowTest.php</file>
 
         </testsuite>
     </testsuites>
