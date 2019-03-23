@@ -1,16 +1,14 @@
 language: php
 
+addons:
+  chrome: stable
+
 sudo: false
 
 php: [7.1, 7.2]
 
 matrix:
   include:
-    # Test against LTS versions
-    - php: 7.2
-      env: SYMFONY_VERSION='^3.4'
-    - php: 7.2
-      env: SYMFONY_VERSION='^4'
       # Test against dev versions of dependencies
     - php: 7.2
       env: DEPENDENCIES='dev'
@@ -21,7 +19,6 @@ cache:
 
 before_install:
   - if [ "$DEPENDENCIES" = "dev" ]; then composer config minimum-stability dev; fi;
-  - sh -c 'if [ "$SYMFONY_VERSION" != "" ]; then composer require -n --no-update symfony/lts=$SYMFONY_VERSION; fi;'
 
 install:
   - composer install -n
