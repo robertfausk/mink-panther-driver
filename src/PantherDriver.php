@@ -12,10 +12,13 @@ declare(strict_types=1);
 namespace Behat\Mink\Driver;
 
 use Behat\Mink\Exception\DriverException;
+use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Facebook\WebDriver\Interactions\Internal\WebDriverCoordinates;
+use Facebook\WebDriver\Interactions\WebDriverActions;
 use Facebook\WebDriver\Internal\WebDriverLocatable;
 use Facebook\WebDriver\WebDriverDimension;
 use Facebook\WebDriver\WebDriverElement;
+use Facebook\WebDriver\WebDriverHasInputDevices;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\BrowserKit\Response;
 use Symfony\Component\DomCrawler\Field\FormField;
@@ -503,28 +506,7 @@ class PantherDriver extends CoreDriver
      */
     public function click($xpath)
     {
-        $crawler = $this->getFilteredCrawler($xpath);
-        $element = $this->getCrawlerElement($crawler);
-
-        try {
-            $link = new Link($element);
-            $this->client->click($link);
-            $this->client->refreshCrawler();
-        } catch (\LogicException $e) {
-            try {
-                $form = new Form($element, $this->client->getWebDriver());
-                $type = $element->getAttribute('type');
-                if ('submit' === $type) {
-                    $this->client->submit($form);
-                    $this->client->refreshCrawler();
-                }
-            } catch (\LogicException $e) {
-                // we are not clicking on a link
-                $element->click();
-                $this->client->refreshCrawler();
-            }
-        }
-
+        $this->client->getMouse()->click($this->toCoordinates($xpath));
     }
 
     /**
@@ -575,6 +557,21 @@ class PantherDriver extends CoreDriver
         }
 
         $field->upload($path);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function dragTo($sourceXpath, $destinationXpath)
+    {
+        $webDriver = $this->client->getWebDriver();
+        if (!$webDriver instanceof WebDriverHasInputDevices) {
+            throw new UnsupportedDriverActionException('Mouse manipulations are not supported by %s', $this);
+        }
+        $webDriverActions = new WebDriverActions($webDriver);
+        $source = $this->getCrawlerElement($this->getFilteredCrawler($sourceXpath));
+        $target = $this->getCrawlerElement($this->getFilteredCrawler($destinationXpath));
+        $webDriverActions->dragAndDrop($source, $target)->perform();
     }
 
     /**
