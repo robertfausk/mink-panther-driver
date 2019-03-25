@@ -19,7 +19,8 @@
   "repositories": [
     {
       "type": "vcs",
-      "url": "https://github.com/robertfausk/panther"
+      "url": "https://github.com/robertfausk/panther",
+      "no-api": true
     }
   ],
   "require": {
