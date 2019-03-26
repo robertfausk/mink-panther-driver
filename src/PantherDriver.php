@@ -321,7 +321,7 @@ class PantherDriver extends CoreDriver
      */
     public function getContent()
     {
-        return $this->getResponse()->getContent();
+        return $this->client->getWebDriver()->getPageSource();
     }
 
     /**
@@ -498,10 +498,9 @@ class PantherDriver extends CoreDriver
             $value = $formField->getValue();
             if ('' === $value && $formField instanceof ChoiceFormField) {
                 $value = null;
-            } elseif ($formField instanceof ChoiceFormField && !$formField->hasValue()) {
-                $value = null;
             }
         } catch (DriverException $e) {
+            // e.g. element is an option
             $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
             $value = $element->getAttribute('value');
         }
@@ -514,12 +513,37 @@ class PantherDriver extends CoreDriver
      */
     public function setValue($xpath, $value)
     {
-        try {
-            $formField = $this->getFormField($xpath);
-            $formField->setValue($value);
-        } catch (DriverException $e) {
-            $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
-            $element->sendKeys($value);
+        $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
+        $jsNode = $this->getJsNode($xpath);
+
+        // add workaround for now in case value is not a canonical path
+        // also see: https://github.com/minkphp/driver-testsuite/pull/32
+        if ('input' === $element->getTagName() && 'file' === $element->getAttribute('type')) {
+            $realpathValue = \realpath($value);
+            $value = \is_string($realpathValue) ? $realpathValue : $value;
+        }
+
+        if ('input' === $element->getTagName() && \in_array($element->getAttribute('type'), ['date', 'color'])) {
+            $this->executeScript(\sprintf('%s.value = \'%s\'', $jsNode, $value));
+        } else {
+            try {
+                $formField = $this->getFormField($xpath);
+                $formField->setValue($value);
+            } catch (DriverException $e) {
+                // e.g. element is on option
+                $element->sendKeys($value);
+            }
+        }
+
+        // Remove the focus from the element if the field still has focus in
+        // order to trigger the change event. By doing this instead of simply
+        // triggering the change event for the given xpath we ensure that the
+        // change event will not be triggered twice for the same element if it
+        // has lost focus in the meanwhile. If the element has lost focus
+        // already then there is nothing to do as this will already have caused
+        // the triggering of the change event for that element.
+        if ($this->evaluateScript(\sprintf('document.activeElement === %s', $jsNode))) {
+            $this->executeScript('document.activeElement.blur();');
         }
     }
 
@@ -550,12 +574,6 @@ class PantherDriver extends CoreDriver
             throw new DriverException(
                 sprintf('Impossible to select an option on the element with XPath "%s" as it is not a select or radio input', $xpath)
             );
-        }
-
-        if ($multiple) {
-            $oldValue = (array)$field->getValue();
-            $oldValue[] = $value;
-            $value = $oldValue;
         }
 
         $field->select($value);
@@ -590,17 +608,7 @@ class PantherDriver extends CoreDriver
      */
     public function isChecked($xpath)
     {
-        $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
-        $type = $element->getAttribute('type');
-
-
-        if ('radio' === $type) {
-            return (bool) $element->getAttribute('value');
-        }
-
-        $choiceFormField = $this->getChoiceFormField($xpath);
-
-        return $choiceFormField->hasValue();
+        return $this->getChoiceFormField($xpath)->hasValue();
     }
 
     /**
@@ -785,7 +793,13 @@ class PantherDriver extends CoreDriver
         try {
             $choiceFormField = new ChoiceFormField($element);
         } catch (\LogicException $e) {
-            throw new DriverException(sprintf('Impossible to check the element with XPath "%s" as it is not a choice form field.', $xpath));
+            throw new DriverException(
+                sprintf(
+                    'Impossible to get the element with XPath "%s" as it is not a choice form field. %s',
+                    $xpath,
+                    $e->getMessage()
+                )
+            );
         }
 
         return $choiceFormField;
@@ -908,6 +922,11 @@ class PantherDriver extends CoreDriver
         }
 
         return $crawler;
+    }
+
+    private function getJsNode(string $xpath): string
+    {
+        return sprintf('document.evaluate(`%s`, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue', $xpath);
     }
 
     private function toCoordinates(string $xpath): WebDriverCoordinates

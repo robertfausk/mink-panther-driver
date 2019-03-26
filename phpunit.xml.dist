@@ -34,10 +34,10 @@
 
             <!--quoteInValue-->
             <!--<file>vendor/mink/driver-testsuite/tests/Form/GeneralTest.php</file>-->
-            <!--<file>vendor/mink/driver-testsuite/tests/Form/Html5Test.php</file>-->
+            <file>vendor/mink/driver-testsuite/tests/Form/Html5Test.php</file>
             <!--<file>vendor/mink/driver-testsuite/tests/Form/RadioTest.php</file>-->
             <!--<file>vendor/mink/driver-testsuite/tests/Form/SelectTest.php</file>-->
-            <!--<file>vendor/mink/driver-testsuite/tests/Js/ChangeEventTest.php</file>-->
+            <file>vendor/mink/driver-testsuite/tests/Js/ChangeEventTest.php</file>
             <!--<file>vendor/mink/driver-testsuite/tests/Js/EventsTest.php</file>-->
             <file>vendor/mink/driver-testsuite/tests/Js/JavascriptEvaluationTest.php</file>
             <file>vendor/mink/driver-testsuite/tests/Js/JavascriptTest.php</file>
