@@ -4,11 +4,9 @@ declare(strict_types=1);
 namespace Behat\Mink\Tests\Driver;
 
 use Behat\Mink\Driver\PantherDriver;
-use Symfony\Component\Panther\PantherTestCaseTrait;
 
 class PantherConfig extends AbstractConfig
 {
-    use PantherTestCaseTrait;
 
     public static function getInstance()
     {

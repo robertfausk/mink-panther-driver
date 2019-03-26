@@ -43,14 +43,15 @@ class PantherDriver extends CoreDriver
 
     /** @var Client */
     private $client;
-
-    /**
-     * @var Form[]
-     */
-    private $forms = array();
     private $started = false;
     private $removeScriptFromUrl = false;
     private $removeHostFromUrl = false;
+    /** @var string */
+    private $clientType;
+    /** @var array */
+    private $clientOptions;
+    /** @var array */
+    private $clientKernelOptions;
 
     /**
      * Initializes Panther driver.
@@ -75,15 +76,9 @@ class PantherDriver extends CoreDriver
         array $options = [],
         array $kernelOptions = []
     ) {
-        if ($clientType === 'panther') {
-            $client = self::createPantherClient($options, $kernelOptions);
-        } elseif ($clientType === 'goutte') {
-            $client = self::createGoutteClient($options, $kernelOptions);
-        } else {
-            throw new \InvalidArgumentException('$clientType have to be one of panther or goutte');
-        }
-
-        $this->client = $client;
+        $this->clientType = $clientType;
+        $this->clientOptions = $options;
+        $this->clientKernelOptions = $kernelOptions;
     }
 
     /**
@@ -133,7 +128,14 @@ class PantherDriver extends CoreDriver
      */
     public function start()
     {
-        $this->client = self::createPantherClient();
+        if ($this->clientType === 'panther') {
+            $this->client = self::createPantherClient($this->clientOptions, $this->clientKernelOptions);
+        } elseif ($this->clientType === 'goutte') {
+            $this->client = self::createGoutteClient($this->clientOptions, $this->clientKernelOptions);
+        } else {
+            throw new \InvalidArgumentException('$clientType has to be "panther" or "goutte".');
+        }
+
         $this->started = true;
     }
 
@@ -150,7 +152,8 @@ class PantherDriver extends CoreDriver
      */
     public function stop()
     {
-        $this->reset();
+        $this->client->quit();
+        self::stopWebServer();
         $this->started = false;
     }
 
@@ -159,9 +162,30 @@ class PantherDriver extends CoreDriver
      */
     public function reset()
     {
-        // Restarting the client resets the cookies and the history
-        $this->client->restart();
-        $this->forms = array();
+        // experimental
+        // $useSpeedUp = false;
+        $useSpeedUp = true;
+        if ($useSpeedUp) {
+            $this->client->getWebDriver()->manage()->deleteAllCookies();
+            $history = $this->client->getHistory();
+            if ($history) {
+                $history->clear();
+            }
+            // not sure if we should also close all windows
+            // $lastWindowHandle = \end($this->client->getWindowHandles());
+            // if ($lastWindowHandle) {
+            //     $this->client->switchTo()->window($lastWindowHandle);
+            // }
+            // $this->client->getWebDriver()->navigate()->refresh();
+            // $this->client->refreshCrawler();
+            // if (\count($this->client->getWindowHandles()) > 1) {
+            //     $this->client->getWebDriver()->close();
+            // }
+        } else {
+            // Restarting the client resets the cookies and the history
+            $this->client->restart();
+        }
+
     }
 
     /**
@@ -170,7 +194,6 @@ class PantherDriver extends CoreDriver
     public function visit($url)
     {
         $this->client->get($this->prepareUrl($url));
-        $this->forms = array();
     }
 
     /**
@@ -187,7 +210,6 @@ class PantherDriver extends CoreDriver
     public function reload()
     {
         $this->client->reload();
-        $this->forms = array();
     }
 
     /**
@@ -196,7 +218,6 @@ class PantherDriver extends CoreDriver
     public function forward()
     {
         $this->client->forward();
-        $this->forms = array();
     }
 
     /**
@@ -205,7 +226,6 @@ class PantherDriver extends CoreDriver
     public function back()
     {
         $this->client->back();
-        $this->forms = array();
     }
 
     /**
