@@ -635,6 +635,11 @@ class PantherDriver extends CoreDriver
      */
     public function executeScript($script)
     {
+        if (\preg_match('/^function[\s\(]/', $script)) {
+            $script = \preg_replace('/;$/', '', $script);
+            $script = '(' . $script . ')';
+        }
+
         return $this->client->executeScript($script);
     }
 
