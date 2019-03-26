@@ -682,7 +682,9 @@ class PantherDriver extends CoreDriver
      */
     public function maximizeWindow($name = null)
     {
-        $this->client->getWebDriver()->manage()->window()->maximize();
+        $width = $this->evaluateScript('screen.width');
+        $height = $this->evaluateScript('screen.height');
+        $this->resizeWindow($width, $height, $name);
     }
 
     /**
