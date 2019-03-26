@@ -5,7 +5,7 @@ addons:
 
 sudo: false
 
-php: [7.1, 7.2]
+php: [7.1, 7.2, 7.3]
 
 matrix:
   allow_failures:
@@ -13,7 +13,7 @@ matrix:
   fast_finish: true
   include:
       # Test against dev versions of dependencies
-    - php: 7.2
+    - php: 7.3
       env: DEPENDENCIES='dev'
 
 cache:
