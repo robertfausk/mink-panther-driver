@@ -643,7 +643,7 @@ class PantherDriver extends CoreDriver
      */
     public function evaluateScript($script)
     {
-        if (0 !== \strpos(trim($script), 'return ')) {
+        if (0 !== \strpos(\trim($script), 'return ')) {
             $script = 'return ' . $script;
         }
 
@@ -695,7 +695,6 @@ class PantherDriver extends CoreDriver
 
         $this->client->submit($crawler->form());
         $this->client->refreshCrawler();
-        // $this->submit($crawler->form());
     }
 
     /**
