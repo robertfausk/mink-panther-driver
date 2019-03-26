@@ -29,7 +29,6 @@ use Symfony\Component\Panther\DomCrawler\Field\ChoiceFormField;
 use Symfony\Component\Panther\DomCrawler\Field\FileFormField;
 use Symfony\Component\Panther\DomCrawler\Field\InputFormField;
 use Symfony\Component\Panther\DomCrawler\Field\TextareaFormField;
-use Symfony\Component\Panther\DomCrawler\Form;
 use Symfony\Component\Panther\PantherTestCaseTrait;
 
 /**
