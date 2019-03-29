@@ -102,6 +102,7 @@ class PantherDriver extends CoreDriver
     public function start()
     {
         $this->client = self::createPantherClient($this->options);
+        $this->client->start();
 
         $this->started = true;
     }
