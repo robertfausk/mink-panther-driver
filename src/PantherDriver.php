@@ -585,6 +585,7 @@ class PantherDriver extends CoreDriver
     public function click($xpath)
     {
         $this->client->getMouse()->click($this->toCoordinates($xpath));
+        $this->client->refreshCrawler();
     }
 
     /**

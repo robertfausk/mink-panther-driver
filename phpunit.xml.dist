@@ -32,8 +32,7 @@
             <directory>vendor/mink/driver-testsuite/tests/Css</directory>
             <file>vendor/mink/driver-testsuite/tests/Form/CheckboxTest.php</file>
 
-            <!--quoteInValue-->
-            <!--<file>vendor/mink/driver-testsuite/tests/Form/GeneralTest.php</file>-->
+            <file>vendor/mink/driver-testsuite/tests/Form/GeneralTest.php</file>
             <file>vendor/mink/driver-testsuite/tests/Form/Html5Test.php</file>
             <!--<file>vendor/mink/driver-testsuite/tests/Form/RadioTest.php</file>-->
             <!--<file>vendor/mink/driver-testsuite/tests/Form/SelectTest.php</file>-->
