@@ -532,13 +532,6 @@ class PantherDriver extends CoreDriver
         $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
         $jsNode = $this->getJsNode($xpath);
 
-        // add workaround for now in case value is not a canonical path
-        // also see: https://github.com/minkphp/driver-testsuite/pull/32
-        if ('input' === $element->getTagName() && 'file' === $element->getAttribute('type')) {
-            $realpathValue = \realpath($value);
-            $value = \is_string($realpathValue) ? $realpathValue : $value;
-        }
-
         if ('input' === $element->getTagName() && \in_array($element->getAttribute('type'), ['date', 'color'])) {
             $this->executeScript(\sprintf('%s.value = \'%s\'', $jsNode, $value));
         } else {
