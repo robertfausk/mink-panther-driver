@@ -45,39 +45,13 @@ class PantherDriver extends CoreDriver
     private $started = false;
     private $removeScriptFromUrl = false;
     private $removeHostFromUrl = false;
-    /** @var string */
-    private $clientType;
     /** @var array */
-    private $clientOptions;
-    /** @var array */
-    private $clientKernelOptions;
+    private $options;
 
-    /**
-     * Initializes Panther driver.
-     * external_base_uri
-     * webServerDir PANTHER_WEB_SERVER_DIR
-     * port PANTHER_WEB_SERVER_PORT
-     * router PANTHER_WEB_SERVER_ROUTER
-     *    protected static $defaultOptions = [
-     *        'webServerDir' => __DIR__.'/../../../../public', // the Flex directory structure
-     *        'hostname' => '127.0.0.1',
-     *        'port' => 9080,
-     *        'router' => '',
-     *        'external_base_uri' => null,
-     *    ];
-     *
-     * @param string   $clientType BrowserKit client instance
-     * @param array    $options
-     * @param array    $kernelOptions
-     */
     public function __construct(
-        string $clientType = 'panther',
-        array $options = [],
-        array $kernelOptions = []
+        array $options = []
     ) {
-        $this->clientType = $clientType;
-        $this->clientOptions = $options;
-        $this->clientKernelOptions = $kernelOptions;
+        $this->options = $options;
     }
 
     /**
@@ -127,13 +101,7 @@ class PantherDriver extends CoreDriver
      */
     public function start()
     {
-        if ($this->clientType === 'panther') {
-            $this->client = self::createPantherClient($this->clientOptions, $this->clientKernelOptions);
-        } elseif ($this->clientType === 'goutte') {
-            $this->client = self::createGoutteClient($this->clientOptions, $this->clientKernelOptions);
-        } else {
-            throw new \InvalidArgumentException('$clientType has to be "panther" or "goutte".');
-        }
+        $this->client = self::createPantherClient($this->options);
 
         $this->started = true;
     }
