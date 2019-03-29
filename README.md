@@ -52,11 +52,11 @@ Since MinkPantherDriver is just glue between Mink and Symfony Panther, it alread
 
 Start docker-compose with php web driver
 
-    docker-composer up php7.2
+    docker-compose up php7.2
 
 Run phpunit tests
 
-    docker-composer exec php7.2 vendor/bin/phpunit
+    docker-compose exec php7.2 vendor/bin/phpunit
 
 ## Credits
 
