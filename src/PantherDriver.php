@@ -988,7 +988,6 @@ class PantherDriver extends CoreDriver
             case null:
             default:
                 return $char;
-                break;
         }
     }
 }
