@@ -369,7 +369,23 @@ class PantherDriver extends CoreDriver
      */
     public function focus($xpath)
     {
-        $this->client->getMouse()->click($this->toCoordinates($xpath));
+        $jsNode = $this->getJsNode($xpath);
+        $script = \sprintf('%s.focus()', $jsNode);
+        $this->executeScript($script);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function blur($xpath)
+    {
+        $jsNode = $this->getJsNode($xpath);
+        $script = \sprintf('%s.blur();', $jsNode);
+        // ensure element had active state; just for passing EventsTest::testBlur
+        if ($this->evaluateScript(\sprintf('document.activeElement !== %s', $jsNode))) {
+            $script = \sprintf('%s.focus();%s', $jsNode, $script);
+        }
+        $this->executeScript($script);
     }
 
     /**
