@@ -26,7 +26,7 @@
   "require": {
     "php": ">=7.1",
     "behat/mink": "^1.7.1@dev",
-    "symfony/panther": "dev-integration-for-mink-panther-driver",
+    "symfony/panther": "~0.4",
     "ext-dom": "*"
   },
   "require-dev": {
