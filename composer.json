@@ -16,13 +16,6 @@
       "email": "robertfreigang@gmx.de"
     }
   ],
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/robertfausk/panther",
-      "no-api": true
-    }
-  ],
   "require": {
     "php": ">=7.1",
     "behat/mink": "^1.7.1@dev",
