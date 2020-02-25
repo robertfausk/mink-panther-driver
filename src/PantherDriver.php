@@ -39,6 +39,9 @@ use Symfony\Component\Panther\PantherTestCaseTrait;
 class PantherDriver extends CoreDriver
 {
     use PantherTestCaseTrait;
+    
+    private const CHROME = 'chrome';
+    private const FIREFOX = 'firefox';
 
     /** @var Client */
     private $client;
