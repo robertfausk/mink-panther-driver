@@ -167,6 +167,14 @@ class PantherDriver extends CoreDriver
     /**
      * {@inheritdoc}
      */
+    public function getStatusCode()
+    {
+        return $this->client->getInternalResponse()->getStatusCode();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getCurrentUrl()
     {
         return $this->client->getCurrentURL();
