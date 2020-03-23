@@ -40,6 +40,10 @@ class PantherDriver extends CoreDriver
 {
     use PantherTestCaseTrait;
 
+    // PantherTestCaseTrait needs this constants; provided via "\Symfony\Component\Panther\PantherTestCase"
+    public const CHROME = 'chrome';
+    public const FIREFOX = 'firefox';    
+    
     /** @var Client */
     private $client;
     private $started = false;
