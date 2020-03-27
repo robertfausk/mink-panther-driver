@@ -40,6 +40,9 @@ class PantherDriver extends CoreDriver
 {
     use PantherTestCaseTrait;
 
+    public const CHROME = 'chrome';
+    public const FIREFOX = 'firefox';
+
     /** @var Client */
     private $client;
     private $started = false;
