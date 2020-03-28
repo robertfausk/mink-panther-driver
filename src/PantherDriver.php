@@ -364,8 +364,17 @@ class PantherDriver extends CoreDriver
     {
         $webDriverActions = $this->getWebDriverActions();
         $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
-        $key = $this->geWebDriverKeyValue($char, $modifier);
-        $webDriverActions->sendKeys($element, $key.WebDriverKeys::NULL)->perform();
+        $key = $this->geWebDriverKeyValue($char);
+
+        $modifier = $this->getWebdriverModifierKeyValue($modifier);
+
+        if ($modifier) {
+            $webDriverActions->keyDown($element, $modifier)->perform();
+            $webDriverActions->sendKeys($element, $key)->perform();
+            $webDriverActions->keyUp($element, $modifier)->perform();
+        } else {
+            $webDriverActions->sendKeys($element, $key)->perform();
+        }
     }
 
     /**
@@ -375,8 +384,13 @@ class PantherDriver extends CoreDriver
     {
         $webDriverActions = $this->getWebDriverActions();
         $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
-        $key = $this->geWebDriverKeyValue($char, $modifier);
-        $webDriverActions->keyDown($element, $key.WebDriverKeys::NULL)->perform();
+        $key = $this->geWebDriverKeyValue($char);
+
+        $webDriverActions->keyDown($element, $key)->perform();
+        $modifier = $this->getWebdriverModifierKeyValue($modifier);
+        if ($modifier) {
+            $webDriverActions->keyDown($element, $modifier)->perform();
+        }
     }
 
     /**
@@ -386,8 +400,18 @@ class PantherDriver extends CoreDriver
     {
         $webDriverActions = $this->getWebDriverActions();
         $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
-        $key = $this->geWebDriverKeyValue($char, $modifier);
+        $key = $this->geWebDriverKeyValue($char);
+
+        $modifier = $this->getWebdriverModifierKeyValue($modifier);
+        if ($modifier) {
+            $webDriverActions->keyDown($element, $modifier)->perform();
+        }
+
+        $webDriverActions->keyDown($element, $key)->perform();
         $webDriverActions->keyUp($element, $key)->perform();
+        if ($modifier) {
+            $webDriverActions->keyUp($element, $modifier)->perform();
+        }
     }
 
     /**
@@ -932,24 +956,36 @@ class PantherDriver extends CoreDriver
         return $webDriverActions;
     }
 
-    private function geWebDriverKeyValue($char, $modifier = null)
+    private function geWebDriverKeyValue($char)
     {
         if (\is_int($char)) {
             $char = \strtolower(\chr($char));
         }
 
+        return $char;
+    }
+
+    private function getWebdriverModifierKeyValue(string $modifier = null): ?string
+    {
         switch ($modifier) {
             case 'alt':
-                return WebDriverKeys::ALT.$char;
+                $modifier = WebDriverKeys::ALT;
+                break;
             case 'ctrl':
-                return WebDriverKeys::CONTROL.$char;
+                $modifier = WebDriverKeys::CONTROL;
+                break;
             case 'shift':
-                return WebDriverKeys::SHIFT.$char;
+                $modifier = WebDriverKeys::SHIFT;
+                break;
             case 'meta':
-                return WebDriverKeys::META.$char;
+                $modifier = WebDriverKeys::META;
+                break;
             case null:
+                break;
             default:
-                return $char;
+                throw new DriverException(\sprintf('Unsupported modifier "%s" given.', $modifier));
         }
+
+        return $modifier;
     }
 }
