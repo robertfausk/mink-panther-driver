@@ -56,7 +56,11 @@ Since MinkPantherDriver is just glue between Mink and Symfony Panther, it alread
 * For `symfony/panther`, read [Panther's documentation](https://github.com/symfony/panther)
 * For usage with `Behat`, read [Behat's documentation](http://behat.org/en/latest/guides.html)
 
-## How to contribute
+### How to upgrade?
+
+ Have a look at [CHANGELOG](CHANGELOG.md) for detailed information.
+
+## How to contribute?
 
 Start docker-compose with php web driver
 
