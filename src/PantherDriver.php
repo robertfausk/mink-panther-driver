@@ -212,8 +212,11 @@ class PantherDriver extends CoreDriver
     {
         if (null === $name) {
             $this->client->switchTo()->defaultContent();
+        } elseif ($name) {
+            $iFrameElement = $this->getCrawlerElement($this->getFilteredCrawler(\sprintf("//iframe[@name='%s']", $name)));
+            $this->client->switchTo()->frame($iFrameElement);
         } else {
-            $this->client->switchTo()->frame($name);
+            $this->client->switchTo()->frame(null);
         }
         $this->client->refreshCrawler();
     }

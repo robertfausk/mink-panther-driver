@@ -18,8 +18,8 @@
   ],
   "require": {
     "php": ">=7.1",
-    "behat/mink": "^1.7.1@dev",
-    "symfony/panther": "~0.4,<0.7",
+    "behat/mink": "~1.8",
+    "symfony/panther": "~0.7",
     "ext-dom": "*"
   },
   "require-dev": {
