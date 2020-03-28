@@ -501,7 +501,7 @@ class PantherDriver extends CoreDriver
         $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
         $jsNode = $this->getJsNode($xpath);
 
-        if ('input' === $element->getTagName() && \in_array($element->getAttribute('type'), ['date', 'color'])) {
+        if ('input' === $element->getTagName() && \in_array($element->getAttribute('type'), ['date', 'time', 'color'])) {
             $this->executeScript(\sprintf('%s.value = \'%s\'', $jsNode, $value));
         } else {
             try {
