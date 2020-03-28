@@ -27,20 +27,24 @@ Usage Example
 ```PHP
 <?php
 
-use Behat\Mink\Mink,
-    Behat\Mink\Session,
-    Behat\Mink\Driver\PantherDriver;
+use Behat\Mink\Mink;
+use Behat\Mink\Session;
+use Behat\Mink\Driver\PantherDriver;
+use Symfony\Component\Panther\PantherTestCase;
 
+// These are the same options passed as first argument to PantherTestCaseTrait::createPantherClient client constructor. 
 protected static $defaultOptions = [
-     'webServerDir' => __DIR__.'/../../../../public', // the Flex directory structure
-     'hostname' => '127.0.0.1',
-     'port' => 9080,
-     'router' => '',
-     'external_base_uri' => null,
- ];
+    'webServerDir' => __DIR__.'/../../../../public', // the Flex directory structure
+    'hostname' => '127.0.0.1',
+    'port' => 9080,
+    'router' => '',
+    'external_base_uri' => null,
+    'readinessPath' => '',
+    'browser' => PantherTestCase::CHROME,
+];
 
 $mink = new Mink(array(
-    'panther' => new Session(new PantherDriver('panther', $defaultOptions, [])),
+    'panther' => new Session(new PantherDriver($defaultOptions)),
 ));
 
 $mink->getSession('panther')->getPage()->findLink('Chat')->click();
