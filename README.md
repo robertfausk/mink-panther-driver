@@ -3,9 +3,9 @@
 [![Latest Unstable Version](https://poser.pugx.org/robertfausk/mink-panther-driver/v/unstable.svg)](https://packagist.org/packages/robertfausk/mink-panther-driver)
 [![Total Downloads](https://poser.pugx.org/robertfausk/mink-panther-driver/downloads.svg)](https://packagist.org/packages/robertfausk/mink-panther-driver)
 [![License](https://poser.pugx.org/robertfausk/mink-panther-driver/license.svg)](https://packagist.org/packages/robertfausk/mink-panther-driver)
-[![Build Status](https://travis-ci.org/robertfausk/mink-panther-driver.svg?branch=master)](https://travis-ci.org/robertfausk/MinkPantherDriver)
-[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/robertfausk/mink-panther-driver/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/robertfausk/MinkPantherDriver/)
-[![Code Coverage](https://scrutinizer-ci.com/g/robertfausk/mink-panther-driver/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/robertfausk/MinkPantherDriver/)
+[![Build Status](https://travis-ci.org/robertfausk/mink-panther-driver.svg?branch=master)](https://travis-ci.org/robertfausk/mink-panther-driver)
+[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/robertfausk/mink-panther-driver/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/robertfausk/mink-panther-driver/)
+[![Code Coverage](https://scrutinizer-ci.com/g/robertfausk/mink-panther-driver/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/robertfausk/mink-panther-driver/)
 [![SensioLabsInsight](https://img.shields.io/symfony/i/grade/43846aa7-7ce4-4e33-95f4-115bf9a7e23e?style=flat-square)](https://insight.sensiolabs.com/projects/43846aa7-7ce4-4e33-95f4-115bf9a7e23e)
 [![SensioLabsInsight](https://img.shields.io/symfony/i/violations/43846aa7-7ce4-4e33-95f4-115bf9a7e23e?style=flat-square)](https://insight.sensiolabs.com/projects/43846aa7-7ce4-4e33-95f4-115bf9a7e23e)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
@@ -19,7 +19,7 @@ Symfony Panther driver for Mink framework
 
 ## Install
 
-    composer req --dev behat/mink robertfausk/mink-panther-driver
+    composer require --dev robertfausk/mink-panther-driver
 
 Usage Example
 -------------
@@ -56,9 +56,10 @@ Please refer to [MinkExtension-example](https://github.com/Behat/MinkExtension-e
 
 Since MinkPantherDriver is just glue between Mink and Symfony Panther, it already has an extensive documentation:
 
-* For `Mink` , read [Mink's documentation](http://mink.behat.org/en/latest/)
-* For `symfony/panther`, read [Panther's documentation](https://github.com/symfony/panther)
+* For `Mink` , read [Mink's documentation](http://mink.behat.org/en/latest/).
+* For `symfony/panther`, read [Panther's documentation](https://github.com/symfony/panther).
 * For usage with `Behat`, read [Behat's documentation](http://behat.org/en/latest/guides.html)
+and give [robertfausk/behat-panther-extension](https://github.com/robertfausk/behat-panther-extension) a try.
 
 ### How to upgrade?
 
