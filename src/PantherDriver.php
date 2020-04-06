@@ -42,8 +42,8 @@ class PantherDriver extends CoreDriver
 
     // PantherTestCaseTrait needs this constants; provided via "\Symfony\Component\Panther\PantherTestCase"
     public const CHROME = 'chrome';
-    public const FIREFOX = 'firefox';    
-    
+    public const FIREFOX = 'firefox';
+
     /** @var Client */
     private $client;
     private $started = false;
@@ -51,11 +51,15 @@ class PantherDriver extends CoreDriver
     private $removeHostFromUrl = false;
     /** @var array */
     private $options;
+    /** @var array */
+    private $kernelOptions;
 
     public function __construct(
-        array $options = []
+        array $options = [],
+        array $kernelOptions = []
     ) {
         $this->options = $options;
+        $this->kernelOptions = $kernelOptions;
     }
 
     /**
@@ -105,7 +109,7 @@ class PantherDriver extends CoreDriver
      */
     public function start()
     {
-        $this->client = self::createPantherClient($this->options);
+        $this->client = self::createPantherClient($this->options, $this->kernelOptions);
         $this->client->start();
 
         $this->started = true;
