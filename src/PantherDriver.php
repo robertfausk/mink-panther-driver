@@ -16,6 +16,7 @@ use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Facebook\WebDriver\Interactions\Internal\WebDriverCoordinates;
 use Facebook\WebDriver\Interactions\WebDriverActions;
 use Facebook\WebDriver\Internal\WebDriverLocatable;
+use Facebook\WebDriver\JavaScriptExecutor;
 use Facebook\WebDriver\WebDriverDimension;
 use Facebook\WebDriver\WebDriverElement;
 use Facebook\WebDriver\WebDriverHasInputDevices;
@@ -142,6 +143,9 @@ class PantherDriver extends CoreDriver
             $history = $this->client->getHistory();
             if ($history) {
                 $history->clear();
+            }
+            if ($this->client->getWebDriver() instanceof JavaScriptExecutor) {
+                $this->executeScript('localStorage.clear();');
             }
             // not sure if we should also close all windows
             // $lastWindowHandle = \end($this->client->getWindowHandles());
