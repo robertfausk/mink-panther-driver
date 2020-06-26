@@ -144,7 +144,10 @@ class PantherDriver extends CoreDriver
             if ($history) {
                 $history->clear();
             }
-            if ($this->client->getWebDriver() instanceof JavaScriptExecutor) {
+            if (
+                $this->client->getWebDriver() instanceof JavaScriptExecutor
+                && !in_array($this->client->getCurrentURL(), ['', 'about:blank', 'data:,'], true)
+            ) {
                 $this->executeScript('localStorage.clear();');
             }
             // not sure if we should also close all windows
