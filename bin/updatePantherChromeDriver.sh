@@ -2,7 +2,7 @@
 # ensure that symfony/panther's chromeDriver matches installed chromium version
 # this needs chromium and symfony/panther (in vendor folder) to be installed
 
-cd /var/www/html/vendor/symfony/panther/chromedriver-bin
+cd vendor/symfony/panther/chromedriver-bin
 
 chromiumVersion=$(chromium --product-version 2>&1;);
 googleChromeVersion=$(google-chrome --product-version 2>&1;);
