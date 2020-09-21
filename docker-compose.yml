@@ -7,5 +7,24 @@ services:
       context: .
       args:
         - PHP_VERSION=7.2
+        - CONTAINER_USER=docker
+    volumes:
+      - .:/var/www/html
+
+  php7.3:
+    tty: true
+    build:
+      context: .
+      args:
+        - PHP_VERSION=7.3
+    volumes:
+      - .:/var/www/html
+
+  php7.4:
+    tty: true
+    build:
+      context: .
+      args:
+        - PHP_VERSION=7.4
     volumes:
       - .:/var/www/html
