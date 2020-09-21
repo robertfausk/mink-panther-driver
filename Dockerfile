@@ -1,6 +1,6 @@
 ARG PHP_VERSION=7.2
 
-FROM composer:1.8 as composer
+FROM composer:latest as composer
 FROM php:${PHP_VERSION}
 
 # replace shell with bash so we can source files
@@ -16,7 +16,7 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_HOME /home/docker/.composer
 # contains dev-mode packages
-RUN composer global require "hirak/prestissimo:^0.3" "sllh/composer-versions-check:^2.0" "pyrech/composer-changelogs:^1.5" --prefer-dist --no-progress --no-suggest --classmap-authoritative
+RUN composer global require "hirak/prestissimo:^0.3" "sllh/composer-versions-check:^2.0" "pyrech/composer-changelogs:^1.7" --prefer-dist --no-progress --no-suggest --classmap-authoritative
 
 ##############################################################
 # add symfony/panther
