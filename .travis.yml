@@ -23,6 +23,7 @@ before_install:
 
 install:
   - composer install -n
+  - bin/updatePantherChromeDriver.sh
   # Start a webserver for web fixtures.
   - vendor/bin/mink-test-server > /dev/null 2>&1 &
 
