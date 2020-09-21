@@ -6,8 +6,6 @@
 [![Build Status](https://travis-ci.org/robertfausk/mink-panther-driver.svg?branch=master)](https://travis-ci.org/robertfausk/mink-panther-driver)
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/robertfausk/mink-panther-driver/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/robertfausk/mink-panther-driver/)
 [![Code Coverage](https://scrutinizer-ci.com/g/robertfausk/mink-panther-driver/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/robertfausk/mink-panther-driver/)
-[![SensioLabsInsight](https://img.shields.io/symfony/i/grade/43846aa7-7ce4-4e33-95f4-115bf9a7e23e?style=flat-square)](https://insight.sensiolabs.com/projects/43846aa7-7ce4-4e33-95f4-115bf9a7e23e)
-[![SensioLabsInsight](https://img.shields.io/symfony/i/violations/43846aa7-7ce4-4e33-95f4-115bf9a7e23e?style=flat-square)](https://insight.sensiolabs.com/projects/43846aa7-7ce4-4e33-95f4-115bf9a7e23e)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 ![PHP7 Compatible](https://img.shields.io/travis/php-v/robertfausk/mink-panther-driver/master?style=flat-square)
 [![Open Issues](https://img.shields.io/github/issues-raw/robertfausk/mink-panther-driver?style=flat-square)](https://github.com/robertfausk/mink-panther-driver/issues)
