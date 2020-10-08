@@ -45,7 +45,7 @@ class PantherDriver extends CoreDriver
     public const CHROME = 'chrome';
     public const FIREFOX = 'firefox';
 
-    /** @var Client */
+    /** @var Client|null */
     private $client;
     private $started = false;
     private $removeScriptFromUrl = false;
@@ -66,6 +66,9 @@ class PantherDriver extends CoreDriver
      */
     public function getClient()
     {
+        if (!$this->isStarted()) {
+            throw new DriverException('Client is not (yet) started.');
+        }
         return $this->client;
     }
 
@@ -125,7 +128,7 @@ class PantherDriver extends CoreDriver
      */
     public function stop()
     {
-        $this->client->quit();
+        $this->getClient()->quit();
         self::stopWebServer();
         $this->started = false;
     }
@@ -139,9 +142,9 @@ class PantherDriver extends CoreDriver
         // $useSpeedUp = false;
         $useSpeedUp = true;
         if ($useSpeedUp) {
-            $this->client->getWebDriver()->manage()->deleteAllCookies();
+            $this->getClient()->getWebDriver()->manage()->deleteAllCookies();
             try {
-                $history = $this->client->getHistory();
+                $history = $this->getClient()->getHistory();
                 if ($history) {
                     $history->clear();
                 }
@@ -149,24 +152,24 @@ class PantherDriver extends CoreDriver
                 // History is not available when using e.g. WebDriver.
             }
             if (
-                $this->client->getWebDriver() instanceof JavaScriptExecutor
-                && !in_array($this->client->getCurrentURL(), ['', 'about:blank', 'data:,'], true)
+                $this->getClient()->getWebDriver() instanceof JavaScriptExecutor
+                && !in_array($this->getClient()->getCurrentURL(), ['', 'about:blank', 'data:,'], true)
             ) {
                 $this->executeScript('localStorage.clear();');
             }
             // not sure if we should also close all windows
-            // $lastWindowHandle = \end($this->client->getWindowHandles());
+            // $lastWindowHandle = \end($this->getClient()->getWindowHandles());
             // if ($lastWindowHandle) {
-            //     $this->client->switchTo()->window($lastWindowHandle);
+            //     $this->getClient()->switchTo()->window($lastWindowHandle);
             // }
-            // $this->client->getWebDriver()->navigate()->refresh();
-            // $this->client->refreshCrawler();
-            // if (\count($this->client->getWindowHandles()) > 1) {
-            //     $this->client->getWebDriver()->close();
+            // $this->getClient()->getWebDriver()->navigate()->refresh();
+            // $this->getClient()->refreshCrawler();
+            // if (\count($this->getClient()->getWindowHandles()) > 1) {
+            //     $this->getClient()->getWebDriver()->close();
             // }
         } else {
             // Restarting the client resets the cookies and the history
-            $this->client->restart();
+            $this->getClient()->restart();
         }
 
     }
@@ -176,7 +179,7 @@ class PantherDriver extends CoreDriver
      */
     public function visit($url)
     {
-        $this->client->get($this->prepareUrl($url));
+        $this->getClient()->get($this->prepareUrl($url));
     }
 
     /**
@@ -184,7 +187,7 @@ class PantherDriver extends CoreDriver
      */
     public function getCurrentUrl()
     {
-        return $this->client->getCurrentURL();
+        return $this->getClient()->getCurrentURL();
     }
 
     /**
@@ -192,7 +195,7 @@ class PantherDriver extends CoreDriver
      */
     public function reload()
     {
-        $this->client->reload();
+        $this->getClient()->reload();
     }
 
     /**
@@ -200,7 +203,7 @@ class PantherDriver extends CoreDriver
      */
     public function forward()
     {
-        $this->client->forward();
+        $this->getClient()->forward();
     }
 
     /**
@@ -208,7 +211,7 @@ class PantherDriver extends CoreDriver
      */
     public function back()
     {
-        $this->client->back();
+        $this->getClient()->back();
     }
 
     /**
@@ -216,8 +219,8 @@ class PantherDriver extends CoreDriver
      */
     public function switchToWindow($name = null)
     {
-        $this->client->switchTo()->window($name);
-        $this->client->refreshCrawler();
+        $this->getClient()->switchTo()->window($name);
+        $this->getClient()->refreshCrawler();
     }
 
     /**
@@ -226,14 +229,14 @@ class PantherDriver extends CoreDriver
     public function switchToIFrame($name = null)
     {
         if (null === $name) {
-            $this->client->switchTo()->defaultContent();
+            $this->getClient()->switchTo()->defaultContent();
         } elseif ($name) {
             $iFrameElement = $this->getCrawlerElement($this->getFilteredCrawler(\sprintf("//iframe[@name='%s']", $name)));
-            $this->client->switchTo()->frame($iFrameElement);
+            $this->getClient()->switchTo()->frame($iFrameElement);
         } else {
-            $this->client->switchTo()->frame(null);
+            $this->getClient()->switchTo()->frame(null);
         }
-        $this->client->refreshCrawler();
+        $this->getClient()->refreshCrawler();
     }
 
     /**
@@ -247,7 +250,7 @@ class PantherDriver extends CoreDriver
             return;
         }
 
-        $jar = $this->client->getCookieJar();
+        $jar = $this->getClient()->getCookieJar();
         // @see: https://github.com/w3c/webdriver/issues/1238
         $jar->set(new Cookie($name, \rawurlencode((string)$value)));
     }
@@ -260,7 +263,7 @@ class PantherDriver extends CoreDriver
     private function deleteCookie($name)
     {
         $path = $this->getCookiePath();
-        $jar = $this->client->getCookieJar();
+        $jar = $this->getClient()->getCookieJar();
 
         do {
             if (null !== $jar->get($name, $path)) {
@@ -292,7 +295,7 @@ class PantherDriver extends CoreDriver
      */
     public function getCookie($name)
     {
-        $cookies = $this->client->getCookieJar()->all();
+        $cookies = $this->getClient()->getCookieJar()->all();
 
         foreach ($cookies as $cookie) {
             if ($cookie->getName() === $name) {
@@ -308,7 +311,7 @@ class PantherDriver extends CoreDriver
      */
     public function getContent()
     {
-        return $this->client->getWebDriver()->getPageSource();
+        return $this->getClient()->getWebDriver()->getPageSource();
     }
 
     /**
@@ -316,7 +319,7 @@ class PantherDriver extends CoreDriver
      */
     public function getScreenshot($saveAs = null): string
     {
-        return $this->client->takeScreenshot($saveAs);
+        return $this->getClient()->takeScreenshot($saveAs);
     }
 
     /**
@@ -324,7 +327,7 @@ class PantherDriver extends CoreDriver
      */
     public function getWindowNames()
     {
-        return $this->client->getWindowHandles();
+        return $this->getClient()->getWindowHandles();
     }
 
     /**
@@ -332,7 +335,7 @@ class PantherDriver extends CoreDriver
      */
     public function getWindowName()
     {
-        return $this->client->getWindowHandle();
+        return $this->getClient()->getWindowHandle();
     }
 
     /**
@@ -348,7 +351,7 @@ class PantherDriver extends CoreDriver
      */
     public function mouseOver($xpath)
     {
-        $this->client->getMouse()->mouseMove($this->toCoordinates($xpath));
+        $this->getClient()->getMouse()->mouseMove($this->toCoordinates($xpath));
     }
 
     /**
@@ -604,8 +607,8 @@ class PantherDriver extends CoreDriver
      */
     public function click($xpath)
     {
-        $this->client->getMouse()->click($this->toCoordinates($xpath));
-        $this->client->refreshCrawler();
+        $this->getClient()->getMouse()->click($this->toCoordinates($xpath));
+        $this->getClient()->refreshCrawler();
     }
 
     /**
@@ -613,7 +616,7 @@ class PantherDriver extends CoreDriver
      */
     public function doubleClick($xpath)
     {
-        $this->client->getMouse()->doubleClick($this->toCoordinates($xpath));
+        $this->getClient()->getMouse()->doubleClick($this->toCoordinates($xpath));
     }
 
     /**
@@ -621,7 +624,7 @@ class PantherDriver extends CoreDriver
      */
     public function rightClick($xpath)
     {
-        $this->client->getMouse()->contextClick($this->toCoordinates($xpath));
+        $this->getClient()->getMouse()->contextClick($this->toCoordinates($xpath));
     }
 
     /**
@@ -669,7 +672,7 @@ class PantherDriver extends CoreDriver
             $script = '(' . $script . ')';
         }
 
-        return $this->client->executeScript($script);
+        return $this->getClient()->executeScript($script);
     }
 
     /**
@@ -681,7 +684,7 @@ class PantherDriver extends CoreDriver
             $script = 'return ' . $script;
         }
 
-        return $this->client->executeScript($script);
+        return $this->getClient()->executeScript($script);
     }
 
     /**
@@ -707,7 +710,7 @@ class PantherDriver extends CoreDriver
     public function resizeWindow($width, $height, $name = null)
     {
         $size = new WebDriverDimension($width, $height);
-        $this->client->getWebDriver()->manage()->window()->setSize($size);
+        $this->getClient()->getWebDriver()->manage()->window()->setSize($size);
     }
 
     /**
@@ -727,8 +730,8 @@ class PantherDriver extends CoreDriver
     {
         $crawler = $this->getFilteredCrawler($xpath);
 
-        $this->client->submit($crawler->form());
-        $this->client->refreshCrawler();
+        $this->getClient()->submit($crawler->form());
+        $this->getClient()->refreshCrawler();
     }
 
     /**
@@ -738,7 +741,7 @@ class PantherDriver extends CoreDriver
      */
     protected function getResponse()
     {
-        $response = $this->client->getInternalResponse();
+        $response = $this->getClient()->getInternalResponse();
 
         if (null === $response) {
             throw new DriverException('Unable to access the response before visiting a page');
@@ -936,7 +939,7 @@ class PantherDriver extends CoreDriver
      */
     private function getCrawler(): Crawler
     {
-        $crawler = $this->client->getCrawler();
+        $crawler = $this->getClient()->getCrawler();
 
         if (null === $crawler) {
             throw new DriverException('Unable to access the response content before visiting a page');
@@ -965,7 +968,7 @@ class PantherDriver extends CoreDriver
 
     private function getWebDriverActions(): WebDriverActions
     {
-        $webDriver = $this->client->getWebDriver();
+        $webDriver = $this->getClient()->getWebDriver();
         if (!$webDriver instanceof WebDriverHasInputDevices) {
             throw new UnsupportedDriverActionException('Mouse manipulations are not supported by %s', $this);
         }
