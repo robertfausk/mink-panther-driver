@@ -43,8 +43,8 @@ class PantherDriver extends CoreDriver
 
     // PantherTestCaseTrait needs this constants; provided via "\Symfony\Component\Panther\PantherTestCase"
     public const CHROME = 'chrome';
-    public const FIREFOX = 'firefox';    
-    
+    public const FIREFOX = 'firefox';
+
     /** @var Client */
     private $client;
     private $started = false;
@@ -140,9 +140,13 @@ class PantherDriver extends CoreDriver
         $useSpeedUp = true;
         if ($useSpeedUp) {
             $this->client->getWebDriver()->manage()->deleteAllCookies();
-            $history = $this->client->getHistory();
-            if ($history) {
-                $history->clear();
+            try {
+                $history = $this->client->getHistory();
+                if ($history) {
+                    $history->clear();
+                }
+            } catch (\LogicException $e) {
+                // History is not available when using e.g. WebDriver.
             }
             if (
                 $this->client->getWebDriver() instanceof JavaScriptExecutor
