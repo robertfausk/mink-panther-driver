@@ -69,6 +69,7 @@ class PantherDriver extends CoreDriver
         if (!$this->isStarted()) {
             throw new DriverException('Client is not (yet) started.');
         }
+
         return $this->client;
     }
 
@@ -85,7 +86,7 @@ class PantherDriver extends CoreDriver
             'setRemoveHostFromUrl() is deprecated as of 1.2 and will be removed in 2.0. Pass the base url in the constructor instead.',
             E_USER_DEPRECATED
         );
-        $this->removeHostFromUrl = (bool)$remove;
+        $this->removeHostFromUrl = (bool) $remove;
     }
 
     /**
@@ -101,7 +102,7 @@ class PantherDriver extends CoreDriver
             'setRemoveScriptFromUrl() is deprecated as of 1.2 and will be removed in 2.0. Pass the base url in the constructor instead.',
             E_USER_DEPRECATED
         );
-        $this->removeScriptFromUrl = (bool)$remove;
+        $this->removeScriptFromUrl = (bool) $remove;
     }
 
     /**
@@ -252,42 +253,7 @@ class PantherDriver extends CoreDriver
 
         $jar = $this->getClient()->getCookieJar();
         // @see: https://github.com/w3c/webdriver/issues/1238
-        $jar->set(new Cookie($name, \rawurlencode((string)$value)));
-    }
-
-    /**
-     * Deletes a cookie by name.
-     *
-     * @param string $name Cookie name.
-     */
-    private function deleteCookie($name)
-    {
-        $path = $this->getCookiePath();
-        $jar = $this->getClient()->getCookieJar();
-
-        do {
-            if (null !== $jar->get($name, $path)) {
-                $jar->expire($name, $path);
-            }
-
-            $path = preg_replace('/.$/', '', $path);
-        } while ($path);
-    }
-
-    /**
-     * Returns current cookie path.
-     *
-     * @return string
-     */
-    private function getCookiePath()
-    {
-        $path = dirname(parse_url($this->getCurrentUrl(), PHP_URL_PATH));
-
-        if ('\\' === DIRECTORY_SEPARATOR) {
-            $path = str_replace('\\', '/', $path);
-        }
-
-        return $path;
+        $jar->set(new Cookie($name, \rawurlencode((string) $value)));
     }
 
     /**
@@ -450,7 +416,7 @@ class PantherDriver extends CoreDriver
     {
         $nodes = $this->getCrawler()->filterXPath($xpath);
 
-        $elements = array();
+        $elements = [];
         foreach ($nodes as $i => $node) {
             $elements[] = sprintf('(%s)[%d]', $xpath, $i + 1);
         }
@@ -535,7 +501,7 @@ class PantherDriver extends CoreDriver
             $value = $element->getAttribute('value');
         }
 
-         return $value;
+        return $value;
     }
 
     /**
@@ -595,7 +561,10 @@ class PantherDriver extends CoreDriver
 
         if (!$field instanceof ChoiceFormField) {
             throw new DriverException(
-                sprintf('Impossible to select an option on the element with XPath "%s" as it is not a select or radio input', $xpath)
+                sprintf(
+                    'Impossible to select an option on the element with XPath "%s" as it is not a select or radio input',
+                    $xpath
+                )
             );
         }
 
@@ -669,7 +638,7 @@ class PantherDriver extends CoreDriver
     {
         if (\preg_match('/^function[\s\(]/', $script)) {
             $script = \preg_replace('/;$/', '', $script);
-            $script = '(' . $script . ')';
+            $script = '('.$script.')';
         }
 
         return $this->getClient()->executeScript($script);
@@ -681,7 +650,7 @@ class PantherDriver extends CoreDriver
     public function evaluateScript($script)
     {
         if (0 !== \strpos(\trim($script), 'return ')) {
-            $script = 'return ' . $script;
+            $script = 'return '.$script;
         }
 
         return $this->getClient()->executeScript($script);
@@ -766,6 +735,41 @@ class PantherDriver extends CoreDriver
     }
 
     /**
+     * Deletes a cookie by name.
+     *
+     * @param string $name Cookie name.
+     */
+    private function deleteCookie($name)
+    {
+        $path = $this->getCookiePath();
+        $jar = $this->getClient()->getCookieJar();
+
+        do {
+            if (null !== $jar->get($name, $path)) {
+                $jar->expire($name, $path);
+            }
+
+            $path = preg_replace('/.$/', '', $path);
+        } while ($path);
+    }
+
+    /**
+     * Returns current cookie path.
+     *
+     * @return string
+     */
+    private function getCookiePath()
+    {
+        $path = dirname(parse_url($this->getCurrentUrl(), PHP_URL_PATH));
+
+        if ('\\' === DIRECTORY_SEPARATOR) {
+            $path = str_replace('\\', '/', $path);
+        }
+
+        return $path;
+    }
+
+    /**
      * Returns form field from XPath query.
      *
      * @param string $xpath
@@ -844,7 +848,9 @@ class PantherDriver extends CoreDriver
         try {
             $inputFormField = new InputFormField($element);
         } catch (\LogicException $e) {
-            throw new DriverException(sprintf('Impossible to check the element with XPath "%s" as it is not an input form field.', $xpath));
+            throw new DriverException(
+                sprintf('Impossible to check the element with XPath "%s" as it is not an input form field.', $xpath)
+            );
         }
 
         return $inputFormField;
@@ -865,7 +871,9 @@ class PantherDriver extends CoreDriver
         try {
             $fileFormField = new FileFormField($element);
         } catch (\LogicException $e) {
-            throw new DriverException(sprintf('Impossible to check the element with XPath "%s" as it is not a file form field.', $xpath));
+            throw new DriverException(
+                sprintf('Impossible to check the element with XPath "%s" as it is not a file form field.', $xpath)
+            );
         }
 
         return $fileFormField;
@@ -886,7 +894,9 @@ class PantherDriver extends CoreDriver
         try {
             $textareaFormField = new TextareaFormField($element);
         } catch (\LogicException $e) {
-            throw new DriverException(sprintf('Impossible to check the element with XPath "%s" as it is not a textarea.', $xpath));
+            throw new DriverException(
+                sprintf('Impossible to check the element with XPath "%s" as it is not a textarea.', $xpath)
+            );
         }
 
         return $textareaFormField;
@@ -950,7 +960,10 @@ class PantherDriver extends CoreDriver
 
     private function getJsNode(string $xpath): string
     {
-        return sprintf('document.evaluate(`%s`, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue', $xpath);
+        return sprintf(
+            'document.evaluate(`%s`, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue',
+            $xpath
+        );
     }
 
     private function toCoordinates(string $xpath): WebDriverCoordinates
