@@ -10,7 +10,7 @@
 [![Open Issues](https://img.shields.io/github/issues-raw/robertfausk/mink-panther-driver?style=flat-square)](https://github.com/robertfausk/mink-panther-driver/issues)
 [![Closed Issues](https://img.shields.io/github/issues-closed-raw/robertfausk/mink-panther-driver?style=flat-square)](https://github.com/robertfausk/mink-panther-driver/issues?q=is%3Aissue+is%3Aclosed)
 [![Contributors](https://img.shields.io/github/contributors/robertfausk/mink-panther-driver?style=flat-square)](https://github.com/robertfausk/mink-panther-driver/graphs/contributors)
-![Contributors](https://img.shields.io/maintenance/yes/2020?style=flat-square)
+![Contributors](https://img.shields.io/maintenance/yes/2022?style=flat-square)
 
 Symfony Panther driver for Mink framework
 
@@ -75,9 +75,15 @@ Run phpunit tests
 If you run into issues of type ```session not created: This version of ChromeDriver only supports Chrome version 79```
 then it is because of mismatched versions between installed chrome driver and chromium.
 Best way to bypass this problem is to update them to their newest version.
-The first line could be sufficient but this depends on your actual setup. 
 
+    docker-compose exec php7.2 composer require --dev dbrekelmans/bdi
     docker-compose exec php7.2 vendor/bin/bdi detect drivers
+
+If you are developing for PHP 7.1 then you should use following.
+The first line could be sufficient but this depends on your actual setup.
+
+    docker-compose exec php7.1 bin/updatePantherChromeDriver.sh
+    docker-compose build php7.1
 
 ## Credits
 

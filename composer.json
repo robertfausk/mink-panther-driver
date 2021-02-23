@@ -23,7 +23,6 @@
     "ext-dom": "*"
   },
   "require-dev": {
-    "dbrekelmans/bdi": "^0.3.0",
     "mink/driver-testsuite": "dev-master",
     "phpunit/phpunit": "~6.0|~7.0",
     "symfony/dom-crawler": "~2.3|~3.0|~4.0",
