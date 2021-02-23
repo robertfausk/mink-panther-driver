@@ -77,8 +77,7 @@ then it is because of mismatched versions between installed chrome driver and ch
 Best way to bypass this problem is to update them to their newest version.
 The first line could be sufficient but this depends on your actual setup. 
 
-    docker-compose exec php7.2 bin/updatePantherChromeDriver.sh
-    docker-compose build php7.2
+    docker-compose exec php7.2 vendor/bin/bdi detect drivers
 
 ## Credits
 

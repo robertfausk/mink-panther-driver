@@ -38,6 +38,4 @@ RUN docker-php-ext-configure gd --with-jpeg-dir=/usr/include/ && \
 WORKDIR /var/www/html
 COPY . /var/www/html
 
-COPY ./start-project.sh /start-project.sh
-
-ENTRYPOINT /start-project.sh
+ENTRYPOINT /var/www/html/start-project.sh
