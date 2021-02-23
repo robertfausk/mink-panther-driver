@@ -66,18 +66,18 @@ and give [robertfausk/behat-panther-extension](https://github.com/robertfausk/be
 
 Start docker-compose with php web driver
 
-    docker-compose up php7.2
+    docker-compose up php8.0
 
 Run phpunit tests
 
-    docker-compose exec php7.2 vendor/bin/phpunit
+    docker-compose exec php8.0 vendor/bin/phpunit
 
 If you run into issues of type ```session not created: This version of ChromeDriver only supports Chrome version 79```
 then it is because of mismatched versions between installed chrome driver and chromium.
 Best way to bypass this problem is to update them to their newest version.
 
-    docker-compose exec php7.2 composer require --dev dbrekelmans/bdi
-    docker-compose exec php7.2 vendor/bin/bdi detect drivers
+    docker-compose exec php8.0 composer require --dev dbrekelmans/bdi
+    docker-compose exec php8.0 vendor/bin/bdi detect drivers
 
 If you are developing for PHP 7.1 then you should use following.
 The first line could be sufficient but this depends on your actual setup.

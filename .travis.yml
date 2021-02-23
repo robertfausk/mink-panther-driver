@@ -5,7 +5,7 @@ addons:
 
 sudo: false
 
-php: [7.1, 7.2, 7.3, 7.4]
+php: [7.1, 7.2, 7.3, 7.4, 8.0]
 
 matrix:
   fast_finish: true
@@ -22,7 +22,8 @@ before_install:
   - if [ "$DEPENDENCIES" = "dev" ]; then composer config minimum-stability dev; fi;
 
 install:
-  - composer install -n
+  - if [ "${TRAVIS_PHP_VERSION:0:3}" != "8.0" ]; then composer install; fi
+  - if [ "${TRAVIS_PHP_VERSION:0:3}" = "8.0" ]; then composer install --ignore-platform-req=php; fi
   - if [ "${TRAVIS_PHP_VERSION:0:3}" != "7.1" ]; then composer require --dev dbrekelmans/bdi; fi
   - if [ "${TRAVIS_PHP_VERSION:0:3}" != "7.1" ]; then vendor/bin/bdi detect drivers; fi
   - if [ "${TRAVIS_PHP_VERSION:0:3}" = "7.1" ]; then bin/updatePantherChromeDriver.sh; fi
