@@ -23,9 +23,9 @@ before_install:
 
 install:
   - composer install -n
-  - if [ "$PHP" != "7.1" ]; then composer require --dev dbrekelmans/bdi; fi;
-  - if [ "$PHP" != "7.1" ]; then vendor/bin/bdi detect drivers; fi;
-  - if [ "$PHP" = "7.1" ]; then bin/updatePantherChromeDriver.sh; fi;
+  - if [ "${TRAVIS_PHP_VERSION:0:3}" != "7.1" ]; then composer require --dev dbrekelmans/bdi; fi;
+  - if [ "${TRAVIS_PHP_VERSION:0:3}" != "7.1" ]; then vendor/bin/bdi detect drivers; fi;
+  - if [ "${TRAVIS_PHP_VERSION:0:3}" = "7.1" ]; then bin/updatePantherChromeDriver.sh; fi;
   # Start a webserver for web fixtures.
   - vendor/bin/mink-test-server > /dev/null 2>&1 &
 
