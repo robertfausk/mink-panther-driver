@@ -1,4 +1,4 @@
-1.0.7 / 2021-02-23
+v1.0.7 / 2021-02-23
 ==================
 
 Features:
@@ -13,7 +13,7 @@ Misc:
 * Support and use composer 2 in Dockerfile
 * Add support for local development with ```PHP 7.1```, ```PHP 7.2```, ```PHP 7.3```, ```PHP 7.4``` and ```PHP 8.0``` via ```docker-compose.yml```
 
-1.0.6 / 2020-08-08
+v1.0.6 / 2020-08-08
 ==================
 
 Features:
@@ -27,21 +27,21 @@ Fixes:
   This ensures compatibility with https://github.com/Behatch/contexts
   see: https://github.com/Behatch/contexts/issues/284
   
-1.0.5 / 2020-06-26
+v1.0.5 / 2020-06-26
 ==================
 
 Fixes:
 
 * Fix localStorage access not allowed for reset() on certain pages ('', 'about:blank', 'data:,') #17 (Thx to @Lctrs)
 
-1.0.4 / 2020-04-14
+v1.0.4 / 2020-04-14
 ==================
 
 Fixes:
 
 * Clear localStorage on reset()
 
-1.0.3 / 2020-03-28
+v1.0.3 / 2020-03-28
 ==================
 
 Features:
@@ -66,7 +66,7 @@ Misc:
 * Added hint about issue ```This version of ChromeDriver only supports Chrome version``` to [README](README.md)
 
 
-1.0.2 / 2020-03-28
+v1.0.2 / 2020-03-28
 ==================
 
 Restricted [```symfony/panther```](https://github.com/symfony/panther) version to ```~0.4,<0.7```
@@ -78,7 +78,7 @@ Misc:
 * Added hint about issue ```This version of ChromeDriver only supports Chrome version``` to [README](README.md)
 
 
-1.0.1 / 2019-10-11
+v1.0.1 / 2019-10-11
 ==================
 
 Misc:
@@ -87,7 +87,7 @@ Misc:
 * Added more badges to [README](README.md) (SensioLabsInsight, Software License, supported PHP versions, Open/Closed Issuse and Contributors)
 
 
-1.0.0 / 2019-08-16
+v1.0.0 / 2019-08-16
 ==================
 
 Initial Release :tada: 
