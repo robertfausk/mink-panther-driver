@@ -1,3 +1,41 @@
+1.0.7 / 2021-02-23
+==================
+
+Feature
+
+* Add support for ```symfony/panther:~1.0``` (Thx to @Haehnchen)
+* Add support for ```PHP 8.0```
+
+Testsuite:
+
+Misc:
+
+* Use ```dbrekelmans/bdi``` for fetching chromedriver if not on PHP 7.1.
+Keep using ```bin/updatePantherChromeDriver.sh``` if working with PHP 7.1.
+* Support and use composer 2 in Dockerfile
+* Add support for ```PHP 7.1```, ```PHP 7.2```, ```PHP 7.3```, ```PHP 7.4``` and ```PHP 8.0``` via ```docker-compose.yml``` 
+
+1.0.6 / 2020-08-08
+==================
+
+Features:
+
+* Add support for ```symfony/panther:0.8```
+
+Fixes:
+
+* Catch LogicException when using not implemented getHistory introduced in symfony/panther 0.8
+* Throw exception when using getClient and driver is not started.
+  This ensures compatibility with https://github.com/Behatch/contexts
+  see: https://github.com/Behatch/contexts/issues/284
+  
+1.0.5 / 2020-06-26
+==================
+
+Fixes:
+
+* Fix localStorage access not allowed for reset() on certain pages ('', 'about:blank', 'data:,') #17 (Thx to @Lctrs)
+
 1.0.4 / 2020-04-14
 ==================
 
