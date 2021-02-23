@@ -34,11 +34,11 @@ install:
   # Start a webserver for web fixtures.
   - vendor/bin/mink-test-server > /dev/null 2>&1 &
 
-script: vendor/bin/phpunit -v --coverage-clover=coverage.clover
+script: if [ "${TRAVIS_PHP_VERSION:0:3}" = "8.0" ]; then vendor/bin/phpunit -v; else vendor/bin/phpunit -v --coverage-clover=coverage.clover; fi
 
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
-  - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+  - if [ "${TRAVIS_PHP_VERSION:0:3}" != "8.0" ]; php ocular.phar code-coverage:upload --format=php-clover coverage.clover; fi
 
 after_failure:
   - cat /tmp/webdriver_output.txt
