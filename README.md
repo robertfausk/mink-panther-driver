@@ -77,7 +77,7 @@ If you run into issues of type ```session not created: This version of ChromeDri
 then it is because of mismatched versions between installed chrome driver and chromium.
 Best way to bypass this problem is to update them to their newest version.
 
-    docker-compose exec php8.0 composer require --dev dbrekelmans/bdi
+    docker-compose exec php8.0 composer require --dev dbrekelmans/bdi --ignore-platform-req=php
     docker-compose exec php8.0 vendor/bin/bdi detect drivers
 
 If you are developing for PHP 7.1 then you should use following.
