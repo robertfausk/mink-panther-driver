@@ -26,6 +26,9 @@ install:
   - if [ "${TRAVIS_PHP_VERSION:0:3}" != "7.1" ]; then composer require --dev dbrekelmans/bdi; fi
   - if [ "${TRAVIS_PHP_VERSION:0:3}" != "7.1" ]; then vendor/bin/bdi detect drivers; fi
   - if [ "${TRAVIS_PHP_VERSION:0:3}" = "7.1" ]; then bin/updatePantherChromeDriver.sh; fi
+  - # additionally place 'chromedriver' file also in folder 'driver' for symfony/panther >=0.9 and PHP 7.1
+  - if [ "${TRAVIS_PHP_VERSION:0:3}" = "7.1" ]; then mkdir drivers; fi
+  - if [ "${TRAVIS_PHP_VERSION:0:3}" = "7.1" ]; then mv vendor/symfony/panther/chromedriver-bin/chromedriver_linux64 drivers/chromedriver; fi
   # Start a webserver for web fixtures.
   - vendor/bin/mink-test-server > /dev/null 2>&1 &
 
