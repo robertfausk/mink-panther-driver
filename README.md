@@ -2,15 +2,16 @@
 [![Latest Stable Version](https://poser.pugx.org/robertfausk/mink-panther-driver/v/stable.svg)](https://packagist.org/packages/robertfausk/mink-panther-driver)
 [![Latest Unstable Version](https://poser.pugx.org/robertfausk/mink-panther-driver/v/unstable.svg)](https://packagist.org/packages/robertfausk/mink-panther-driver)
 [![Total Downloads](https://poser.pugx.org/robertfausk/mink-panther-driver/downloads.svg)](https://packagist.org/packages/robertfausk/mink-panther-driver)
+[![Monhtly Downloads](https://img.shields.io/packagist/dm/robertfausk/mink-panther-driver?style=flat&color=blue)](https://img.shields.io/packagist/dm/robertfausk/mink-panther-driver)
 [![Build Status](https://travis-ci.com/robertfausk/mink-panther-driver.svg?branch=master)](https://travis-ci.com/robertfausk/mink-panther-driver)
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/robertfausk/mink-panther-driver/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/robertfausk/mink-panther-driver/)
 [![Code Coverage](https://scrutinizer-ci.com/g/robertfausk/mink-panther-driver/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/robertfausk/mink-panther-driver/)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
-![PHP7 Compatible](https://img.shields.io/travis/php-v/robertfausk/mink-panther-driver/master?style=flat-square)
-[![Open Issues](https://img.shields.io/github/issues-raw/robertfausk/mink-panther-driver?style=flat-square)](https://github.com/robertfausk/mink-panther-driver/issues)
-[![Closed Issues](https://img.shields.io/github/issues-closed-raw/robertfausk/mink-panther-driver?style=flat-square)](https://github.com/robertfausk/mink-panther-driver/issues?q=is%3Aissue+is%3Aclosed)
-[![Contributors](https://img.shields.io/github/contributors/robertfausk/mink-panther-driver?style=flat-square)](https://github.com/robertfausk/mink-panther-driver/graphs/contributors)
-![Contributors](https://img.shields.io/maintenance/yes/2022?style=flat-square)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](LICENSE)
+![PHP7 Compatible](https://img.shields.io/travis/php-v/robertfausk/mink-panther-driver/master?style=flat)
+[![Open Issues](https://img.shields.io/github/issues-raw/robertfausk/mink-panther-driver?style=flat)](https://github.com/robertfausk/mink-panther-driver/issues)
+[![Closed Issues](https://img.shields.io/github/issues-closed-raw/robertfausk/mink-panther-driver?style=flat)](https://github.com/robertfausk/mink-panther-driver/issues?q=is%3Aissue+is%3Aclosed)
+[![Contributors](https://img.shields.io/github/contributors/robertfausk/mink-panther-driver?style=flat)](https://github.com/robertfausk/mink-panther-driver/graphs/contributors)
+![Contributors](https://img.shields.io/maintenance/yes/2022?style=flat)
 
 Symfony Panther driver for Mink framework
 
