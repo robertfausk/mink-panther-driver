@@ -1,19 +1,17 @@
 1.0.7 / 2021-02-23
 ==================
 
-Feature
+Features:
 
 * Add support for ```symfony/panther:~1.0``` (Thx to @Haehnchen)
 * Add support for ```PHP 8.0```
 
-Testsuite:
-
 Misc:
 
 * Use ```dbrekelmans/bdi``` for fetching chromedriver if not on PHP 7.1.
-Keep using ```bin/updatePantherChromeDriver.sh``` if working with PHP 7.1.
+  Keep using ```bin/updatePantherChromeDriver.sh``` if working with PHP 7.1.
 * Support and use composer 2 in Dockerfile
-* Add support for ```PHP 7.1```, ```PHP 7.2```, ```PHP 7.3```, ```PHP 7.4``` and ```PHP 8.0``` via ```docker-compose.yml``` 
+* Add support for local development with ```PHP 7.1```, ```PHP 7.2```, ```PHP 7.3```, ```PHP 7.4``` and ```PHP 8.0``` via ```docker-compose.yml```
 
 1.0.6 / 2020-08-08
 ==================
