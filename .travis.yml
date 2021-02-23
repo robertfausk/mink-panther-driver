@@ -24,7 +24,8 @@ before_install:
 install:
   - if [ "${TRAVIS_PHP_VERSION:0:3}" != "8.0" ]; then composer install; fi
   - if [ "${TRAVIS_PHP_VERSION:0:3}" = "8.0" ]; then composer install --ignore-platform-req=php; fi
-  - if [ "${TRAVIS_PHP_VERSION:0:3}" != "7.1" ]; then composer require --dev dbrekelmans/bdi; fi
+  - if [ "${TRAVIS_PHP_VERSION:0:3}" = "8.0" ]; then composer require --dev --ignore-platform-req=php dbrekelmans/bdi; fi
+  - if [ "${TRAVIS_PHP_VERSION:0:3}" != "7.1" ] && [ "${TRAVIS_PHP_VERSION:0:3}" != "8.0" ]; then composer require --dev dbrekelmans/bdi; fi
   - if [ "${TRAVIS_PHP_VERSION:0:3}" != "7.1" ]; then vendor/bin/bdi detect drivers; fi
   - if [ "${TRAVIS_PHP_VERSION:0:3}" = "7.1" ]; then bin/updatePantherChromeDriver.sh; fi
   - # additionally place 'chromedriver' file also in folder 'driver' for symfony/panther >=0.9 and PHP 7.1
