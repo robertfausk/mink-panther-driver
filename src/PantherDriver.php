@@ -52,11 +52,19 @@ class PantherDriver extends CoreDriver
     private $removeHostFromUrl = false;
     /** @var array */
     private $options;
+    /** @var array */
+    private $kernelOptions;
+    /** @var array */
+    private $managerOptions;
 
     public function __construct(
-        array $options = []
+        array $options = [],
+        array $kernelOptions = [],
+        array $managerOptions = []
     ) {
         $this->options = $options;
+        $this->kernelOptions = $kernelOptions;
+        $this->managerOptions = $managerOptions;
     }
 
     /**
@@ -110,7 +118,7 @@ class PantherDriver extends CoreDriver
      */
     public function start()
     {
-        $this->client = self::createPantherClient($this->options);
+        $this->client = self::createPantherClient($this->options, $this->kernelOptions, $this->managerOptions);
         $this->client->start();
 
         $this->started = true;
