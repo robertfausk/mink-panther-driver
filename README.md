@@ -30,7 +30,7 @@ use Behat\Mink\Session;
 use Behat\Mink\Driver\PantherDriver;
 use Symfony\Component\Panther\PantherTestCase;
 
-// These are the same options passed as first argument to PantherTestCaseTrait::createPantherClient client constructor. 
+// These are the same options passed as in PantherTestCaseTrait::createPantherClient client constructor. 
 protected static $defaultOptions = [
     'webServerDir' => __DIR__.'/../../../../public', // the Flex directory structure
     'hostname' => '127.0.0.1',
@@ -40,9 +40,11 @@ protected static $defaultOptions = [
     'readinessPath' => '',
     'browser' => PantherTestCase::CHROME,
 ];
+$kernelOptions = [];
+$managerOptions = [];
 
 $mink = new Mink(array(
-    'panther' => new Session(new PantherDriver($defaultOptions)),
+    'panther' => new Session(new PantherDriver($defaultOptions, $kernelOptions, $managerOptions)),
 ));
 
 $mink->getSession('panther')->getPage()->findLink('Chat')->click();
