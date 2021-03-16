@@ -372,6 +372,14 @@ class PantherDriver extends CoreDriver
         }
     }
 
+    public function sendKeys($xpath, $keys, $modifier = null)
+    {
+        $webDriverActions = $this->getWebDriverActions();
+        $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
+
+        $webDriverActions->sendKeys($element, $keys)->perform();
+    }
+
     /**
      * {@inheritdoc}
      */
