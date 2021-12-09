@@ -2,7 +2,7 @@ language: php
 
 os: linux
 arch:
-  - arm64
+  - amd64
 
 addons:
   chrome: stable
