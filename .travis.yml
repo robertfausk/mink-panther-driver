@@ -1,5 +1,9 @@
 language: php
 
+os: linux
+arch:
+  - arm64
+
 addons:
   chrome: stable
 
