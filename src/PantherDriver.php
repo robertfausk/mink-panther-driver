@@ -773,6 +773,9 @@ class PantherDriver extends CoreDriver
         if ('\\' === DIRECTORY_SEPARATOR) {
             $path = str_replace('\\', '/', $path);
         }
+        if (0 !== \substr_compare($path, '/', -1)) {
+            $path .= '/';
+        }
 
         return $path;
     }
