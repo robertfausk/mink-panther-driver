@@ -381,10 +381,13 @@ class PantherDriver extends CoreDriver
         $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
         $key = $this->geWebDriverKeyValue($char);
 
-        $webDriverActions->keyDown($element, $key)->perform();
         $modifier = $this->getWebdriverModifierKeyValue($modifier);
         if ($modifier) {
             $webDriverActions->keyDown($element, $modifier)->perform();
+        }
+        $webDriverActions->sendKeys($element, $key)->perform();
+        if ($modifier) {
+            $webDriverActions->keyUp($element, $modifier)->perform();
         }
     }
 
@@ -401,9 +404,7 @@ class PantherDriver extends CoreDriver
         if ($modifier) {
             $webDriverActions->keyDown($element, $modifier)->perform();
         }
-
-        $webDriverActions->keyDown($element, $key)->perform();
-        $webDriverActions->keyUp($element, $key)->perform();
+        $webDriverActions->sendKeys($element, $key)->perform();
         if ($modifier) {
             $webDriverActions->keyUp($element, $modifier)->perform();
         }
