@@ -137,7 +137,13 @@ class PantherDriver extends CoreDriver
      */
     public function stop()
     {
-        $this->getClient()->quit();
+        try {
+            $this->getClient()->quit();
+        } catch (DriverException $e) {
+            // do nothing
+        }
+        //$this->getClient()->quit();
+
         self::stopWebServer();
         $this->started = false;
     }
@@ -229,7 +235,6 @@ class PantherDriver extends CoreDriver
     public function switchToWindow($name = null)
     {
         $this->getClient()->switchTo()->window($name);
-        $this->getClient()->refreshCrawler();
     }
 
     /**
@@ -423,6 +428,7 @@ class PantherDriver extends CoreDriver
      */
     public function findElementXpaths($xpath)
     {
+        $this->getClient()->refreshCrawler();
         $nodes = $this->getCrawler()->filterXPath($xpath);
 
         $elements = [];
@@ -586,7 +592,6 @@ class PantherDriver extends CoreDriver
     public function click($xpath)
     {
         $this->getClient()->getMouse()->click($this->toCoordinates($xpath));
-        $this->getClient()->refreshCrawler();
     }
 
     /**
@@ -610,7 +615,7 @@ class PantherDriver extends CoreDriver
      */
     public function isChecked($xpath)
     {
-        return $this->getChoiceFormField($xpath)->hasValue();
+        return $this->getCrawlerElement($this->getFilteredCrawler($xpath))->isSelected();
     }
 
     /**
@@ -709,7 +714,6 @@ class PantherDriver extends CoreDriver
         $crawler = $this->getFilteredCrawler($xpath);
 
         $this->getClient()->submit($crawler->form());
-        $this->getClient()->refreshCrawler();
     }
 
     /**
