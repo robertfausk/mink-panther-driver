@@ -20,7 +20,17 @@ class PantherConfig extends AbstractConfig
     {
         $_SERVER['PANTHER_WEB_SERVER_DIR'] = __DIR__.'/../vendor/mink/driver-testsuite/web-fixtures/';
 
-        return new PantherDriver();
+        return new PantherDriver(
+            [],
+            [],
+            [
+                'capabilities' => [
+                    'goog:chromeOptions' => [
+                        'w3c' => false,
+                    ],
+                ],
+            ]
+        );
     }
 
     /**
