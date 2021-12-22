@@ -137,13 +137,7 @@ class PantherDriver extends CoreDriver
      */
     public function stop()
     {
-        try {
-            $this->getClient()->quit();
-        } catch (DriverException $e) {
-            // do nothing
-        }
-        //$this->getClient()->quit();
-
+        $this->getClient()->quit();
         self::stopWebServer();
         $this->started = false;
     }
@@ -452,6 +446,7 @@ class PantherDriver extends CoreDriver
      */
     public function getText($xpath)
     {
+        $this->getClient()->refreshCrawler();
         $text = $this->getFilteredCrawler($xpath)->text();
         $text = str_replace("\n", ' ', $text);
         $text = preg_replace('/ {2,}/', ' ', $text);
