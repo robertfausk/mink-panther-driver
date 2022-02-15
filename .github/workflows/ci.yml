@@ -15,11 +15,11 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        php: [ '7.1', '7.2', '7.3', '7.4', '8.0', '8.1' ]
+        php: [ '7.2', '7.3', '7.4', '8.0', '8.1' ]
       fail-fast: false
     env:
       MATRIX_PHP: ${{ matrix.php }}
-
+      PANTHER_CHROME_BINARY: '/opt/hostedtoolcache/chromium/858016/x64/chrome'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -28,38 +28,37 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          coverage: "none"
+          coverage: "xdebug"
           php-version: "${{ matrix.php }}"
+          extensions: zip
           tools: composer
-          # PHP 7.1 development web server segfaults if timezone not set.
-          ini-values: date.timezone=Europe/Berlin, error_reporting=-1, display_errors=On
-      - name: Configure for PHP >= 7.2
-        if: "${{ matrix.php >= '7.2' }}"
-        run: |
-          composer require --no-update --dev dbrekelmans/bdi
+          ini-values: error_reporting=-1, display_errors=On
       - name: Install dependencies
         run: |
-          composer update --no-interaction --prefer-dist
-      - name: Add browser drivers for PHP >= 7.2
-        if: "${{ matrix.php >= '7.2' }}"
+          composer install --no-interaction --no-scripts --no-progress --prefer-dist
+      - uses: browser-actions/setup-chrome@latest
+        with:
+            chrome-version: 858016
+      - run: chrome --version
+      - name: Uninstall chromedriver from Ubuntu
         run: |
-          vendor/bin/bdi detect drivers
-      - name: Add browser drivers for PHP == 7.1
-        if: "${{ matrix.php == '7.1' }}"
-        # additionally, place 'chromedriver' file also in folder 'driver' for symfony/panther >=0.9 and PHP 7.1
+            sudo apt-get remove chromium-chromedriver
+      - name: Add browser drivers
         run: |
-          bin/updatePantherChromeDriver.sh
-          mkdir drivers
-          mv vendor/symfony/panther/chromedriver-bin/chromedriver_linux64 drivers/chromedriver
+          vendor/bin/bdi driver:chromedriver --driver-version=90.0.4430.24 drivers
       - name: Setup Mink test server
-        # PHP 7.1 development web server segfaults if USE_ZEND_ALLOC not set to 0.
         run: |
           mkdir ./logs
-          export USE_ZEND_ALLOC=0
           ./vendor/bin/mink-test-server &> ./logs/mink-test-server.log &
+      - name: Remove preinstalled chromedriver bin from ubuntu
+        run: sudo rm -rf /usr/local/share/chrome_driver
       - name: Run tests
         run: |
-          vendor/bin/phpunit -v
+          vendor/bin/phpunit -v --coverage-clover=coverage.xml
+      - name: Upload coverage
+        uses: codecov/codecov-action@v2
+        with:
+          files: coverage.xml
       - name: Archive logs artifacts
         if: ${{ failure() }}
         uses: actions/upload-artifact@v2
