@@ -1,6 +1,6 @@
 ARG PHP_VERSION=7.2
 
-FROM composer:latest as composer
+FROM composer:2.2 as composer
 FROM php:${PHP_VERSION}
 
 # replace shell with bash so we can source files

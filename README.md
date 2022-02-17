@@ -3,15 +3,18 @@
 [![Latest Unstable Version](https://poser.pugx.org/robertfausk/mink-panther-driver/v/unstable.svg)](https://packagist.org/packages/robertfausk/mink-panther-driver)
 [![Total Downloads](https://poser.pugx.org/robertfausk/mink-panther-driver/downloads.svg)](https://packagist.org/packages/robertfausk/mink-panther-driver)
 [![Monhtly Downloads](https://img.shields.io/packagist/dm/robertfausk/mink-panther-driver?style=flat&color=blue)](https://img.shields.io/packagist/dm/robertfausk/mink-panther-driver)
-[![Build Status](https://travis-ci.com/robertfausk/mink-panther-driver.svg?branch=master)](https://travis-ci.com/robertfausk/mink-panther-driver)
+[![Daily Downloads](https://img.shields.io/packagist/dd/robertfausk/mink-panther-driver?style=flat&color=blue)](https://img.shields.io/packagist/dm/robertfausk/mink-panther-driver)
+[![Tests](https://github.com/robertfausk/mink-panther-driver/actions/workflows/ci.yml/badge.svg)](https://github.com/robertfausk/mink-panther-driver/actions/workflows/ci.yml)
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/robertfausk/mink-panther-driver/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/robertfausk/mink-panther-driver/)
 [![Code Coverage](https://scrutinizer-ci.com/g/robertfausk/mink-panther-driver/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/robertfausk/mink-panther-driver/)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](LICENSE)
-![PHP7 Compatible](https://img.shields.io/travis/php-v/robertfausk/mink-panther-driver/master?style=flat)
+[![PHP Version Require](http://poser.pugx.org/robertfausk/mink-panther-driver/require/php)](https://packagist.org/packages/robertfausk/mink-panther-driver)
 [![Open Issues](https://img.shields.io/github/issues-raw/robertfausk/mink-panther-driver?style=flat)](https://github.com/robertfausk/mink-panther-driver/issues)
 [![Closed Issues](https://img.shields.io/github/issues-closed-raw/robertfausk/mink-panther-driver?style=flat)](https://github.com/robertfausk/mink-panther-driver/issues?q=is%3Aissue+is%3Aclosed)
 [![Contributors](https://img.shields.io/github/contributors/robertfausk/mink-panther-driver?style=flat)](https://github.com/robertfausk/mink-panther-driver/graphs/contributors)
 ![Contributors](https://img.shields.io/maintenance/yes/2022?style=flat)
+[![Dependents](http://poser.pugx.org/robertfausk/mink-panther-driver/dependents)](https://packagist.org/packages/robertfausk/mink-panther-driver/dependents)
+
 
 Symfony Panther driver for Mink framework
 
@@ -69,24 +72,17 @@ and give [robertfausk/behat-panther-extension](https://github.com/robertfausk/be
 
 Start docker-compose with php web driver
 
-    docker-compose up php8.0
+    docker-compose up php8.1
 
 Run phpunit tests
 
-    docker-compose exec php8.0 vendor/bin/phpunit
+    docker-compose exec php8.1 vendor/bin/phpunit
 
 If you run into issues of type ```session not created: This version of ChromeDriver only supports Chrome version 79```
 then it is because of mismatched versions between installed chrome driver and chromium.
 Best way to bypass this problem is to update them to their newest version.
 
-    docker-compose exec php8.0 composer require --dev dbrekelmans/bdi --ignore-platform-req=php
-    docker-compose exec php8.0 vendor/bin/bdi detect drivers
-
-If you are developing for PHP 7.1 then you should use following.
-The first line could be sufficient but this depends on your actual setup.
-
-    docker-compose exec php7.1 bin/updatePantherChromeDriver.sh
-    docker-compose build php7.1
+    docker-compose exec php8.1 vendor/bin/bdi detect drivers
 
 ## Credits
 

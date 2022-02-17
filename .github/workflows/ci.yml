@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+
+  tests:
+    name: Tests
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        php: [ '7.2', '7.3', '7.4', '8.0', '8.1' ]
+      fail-fast: false
+    env:
+      MATRIX_PHP: ${{ matrix.php }}
+      PANTHER_CHROME_BINARY: '/opt/hostedtoolcache/chromium/858016/x64/chrome'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          coverage: "xdebug"
+          php-version: "${{ matrix.php }}"
+          extensions: zip
+          tools: composer
+          ini-values: error_reporting=-1, display_errors=On
+      - name: Install dependencies
+        run: |
+          composer install --no-interaction --no-scripts --no-progress --prefer-dist
+      - uses: browser-actions/setup-chrome@latest
+        with:
+            chrome-version: 858016
+      - run: chrome --version
+      - name: Uninstall chromedriver from Ubuntu
+        run: |
+            sudo apt-get remove chromium-chromedriver
+      - name: Add browser drivers
+        run: |
+          vendor/bin/bdi driver:chromedriver --driver-version=90.0.4430.24 drivers
+      - name: Setup Mink test server
+        run: |
+          mkdir ./logs
+          ./vendor/bin/mink-test-server &> ./logs/mink-test-server.log &
+      - name: Remove preinstalled chromedriver bin from ubuntu
+        run: sudo rm -rf /usr/local/share/chrome_driver
+      - name: Run tests
+        run: |
+          vendor/bin/phpunit -v --coverage-clover=coverage.xml
+      - name: Upload coverage
+        uses: codecov/codecov-action@v2
+        with:
+          files: coverage.xml
+      - name: Archive logs artifacts
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: logs_php-${{ matrix.php }}
+          path: |
+            logs
