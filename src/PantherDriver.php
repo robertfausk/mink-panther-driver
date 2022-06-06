@@ -475,7 +475,7 @@ class PantherDriver extends CoreDriver
 
         $crawlerElement = $this->getCrawlerElement($crawler);
         if ($crawlerElement instanceof RemoteWebElement) {
-            $webDriver = $this->client->getWebDriver();
+            $webDriver = $this->getClient()->getWebDriver();
             if ($webDriver instanceof RemoteWebDriver && $webDriver->isW3cCompliant()) {
                 try {
                     return $crawlerElement->getDomProperty('outerHTML');
