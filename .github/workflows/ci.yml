@@ -19,7 +19,6 @@ jobs:
       fail-fast: false
     env:
       MATRIX_PHP: ${{ matrix.php }}
-      PANTHER_CHROME_BINARY: '/opt/hostedtoolcache/chromium/858016/x64/chrome'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -37,15 +36,10 @@ jobs:
         run: |
           composer install --no-interaction --no-scripts --no-progress --prefer-dist
       - uses: browser-actions/setup-chrome@latest
-        with:
-            chrome-version: 858016
       - run: chrome --version
-      - name: Uninstall chromedriver from Ubuntu
-        run: |
-            sudo apt-get remove chromium-chromedriver
       - name: Add browser drivers
         run: |
-          vendor/bin/bdi driver:chromedriver --driver-version=90.0.4430.24 drivers
+          vendor/bin/bdi driver:chromedriver drivers
       - name: Setup Mink test server
         run: |
           mkdir ./logs

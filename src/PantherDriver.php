@@ -13,10 +13,13 @@ namespace Behat\Mink\Driver;
 
 use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
+use Facebook\WebDriver\Exception\UnsupportedOperationException;
 use Facebook\WebDriver\Interactions\Internal\WebDriverCoordinates;
 use Facebook\WebDriver\Interactions\WebDriverActions;
 use Facebook\WebDriver\Internal\WebDriverLocatable;
 use Facebook\WebDriver\JavaScriptExecutor;
+use Facebook\WebDriver\Remote\RemoteWebDriver;
+use Facebook\WebDriver\Remote\RemoteWebElement;
 use Facebook\WebDriver\WebDriverDimension;
 use Facebook\WebDriver\WebDriverElement;
 use Facebook\WebDriver\WebDriverHasInputDevices;
@@ -470,6 +473,18 @@ class PantherDriver extends CoreDriver
     {
         $crawler = $this->getFilteredCrawler($xpath);
 
+        $crawlerElement = $this->getCrawlerElement($crawler);
+        if ($crawlerElement instanceof RemoteWebElement) {
+            $webDriver = $this->client->getWebDriver();
+            if ($webDriver instanceof RemoteWebDriver && $webDriver->isW3cCompliant()) {
+                try {
+                    return $crawlerElement->getDomProperty('outerHTML');
+                } catch (UnsupportedOperationException $e) {
+                    throw new DriverException($e->getMessage(), $e->getCode(), $e);
+                }
+            }
+        }
+
         return $crawler->html();
     }
 
@@ -480,18 +495,7 @@ class PantherDriver extends CoreDriver
     {
         $crawler = $this->getFilteredCrawler($xpath);
 
-        $attribute = $this->getCrawlerElement($crawler)->getAttribute($name);
-
-        // let's get hacky
-        if ('' === $attribute) {
-            $html = \strtolower($crawler->html());
-            $name = \strtolower($name).'=';
-            if (0 === \substr_count($html, $name)) {
-                $attribute = null;
-            }
-        }
-
-        return $attribute;
+        return $this->getCrawlerElement($crawler)->getAttribute($name);
     }
 
     /**
