@@ -19,7 +19,6 @@ jobs:
       fail-fast: false
     env:
       MATRIX_PHP: ${{ matrix.php }}
-      PANTHER_CHROME_BINARY: '/opt/hostedtoolcache/chromium/858016/x64/chrome'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
