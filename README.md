@@ -87,6 +87,6 @@ Best way to bypass this problem is to update them to their newest version.
 ## Credits
 
 Created by Robert Freigang [robertfausk](https://github.com/robertfausk).
-
+ 
 MinkPantherDriver is built on top of [Panther](https://github.com/symfony/panther) and for usage with [Behat and Mink](http://behat.org/en/latest/cookbooks/integrating_symfony2_with_behat.html#initialising-behat). 
 It has been inspired by [MinkBrowserKitDriver](https://github.com/minkphp/MinkBrowserKitDriver) and [MinkSelenium2Driver](https://github.com/minkphp/MinkSelenium2Driver).
