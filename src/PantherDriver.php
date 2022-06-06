@@ -495,18 +495,7 @@ class PantherDriver extends CoreDriver
     {
         $crawler = $this->getFilteredCrawler($xpath);
 
-        $attribute = $this->getCrawlerElement($crawler)->getAttribute($name);
-
-        // let's get hacky
-        if ('' === $attribute) {
-            $html = \strtolower($crawler->html());
-            $name = \strtolower($name).'=';
-            if (0 === \substr_count($html, $name)) {
-                $attribute = null;
-            }
-        }
-
-        return $attribute;
+        return $this->getCrawlerElement($crawler)->getAttribute($name);
     }
 
     /**
