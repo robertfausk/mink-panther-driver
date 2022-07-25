@@ -1,14 +1,15 @@
-v1.1.0 / 2022-02-xx
-==================
+v1.1.0 / 2022-07-25
+===================
 
 Features:
-* Add support for ```symfony/panther:~2.0```.
+* Add support for ```symfony/panther:~2.0``` and ```symfony``` ```~6.0```.
 * Add support for ```PHP 8.1```.
 * Drop support for ```PHP 7.1``` cause of too much maintenance afford. Stick with ```v1.0.8``` if you want to use ```PHP 7.1```.
-* Enable RadioTest::testIsChecked and RadioTest::testSetValue as soon as ```symfony/panther#v2.0.2``` ist out.
+* Enable RadioTest::testIsChecked #11 and RadioTest::testSetValue #10 as soon as ```symfony/panther#v2.0.2``` ist out. 
+See related PR: https://github.com/symfony/panther/pull/526
 
 Misc:
-* Use GitHub Actions instead of Travis CI for continuous integration.
+* Use GitHub Actions instead of Travis CI for continuous integration. #22
 
 v1.0.8 / 2021-03-14
 ==================
