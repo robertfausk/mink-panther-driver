@@ -13,6 +13,7 @@ namespace Behat\Mink\Driver;
 
 use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
+use Facebook\WebDriver\Exception\NoSuchElementException;
 use Facebook\WebDriver\Exception\UnsupportedOperationException;
 use Facebook\WebDriver\Interactions\Internal\WebDriverCoordinates;
 use Facebook\WebDriver\Interactions\WebDriverActions;
@@ -526,12 +527,16 @@ class PantherDriver extends CoreDriver
         $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
         $jsNode = $this->getJsNode($xpath);
 
-        if ('input' === $element->getTagName() && \in_array($element->getAttribute('type'), ['date', 'time', 'color'])) {
+        $this->validateValueForElement($element, $value);
+        $inputType = $element->getAttribute('type');
+        if ('input' === $element->getTagName() && \in_array($inputType, ['date', 'time', 'color'])) {
             $this->executeScript(\sprintf('%s.value = \'%s\'', $jsNode, $value));
         } else {
             try {
                 $formField = $this->getFormField($xpath);
                 $formField->setValue($value);
+            } catch (NoSuchElementException | \InvalidArgumentException $e) {
+                throw new DriverException($e->getMessage(), 0, $e);
             } catch (DriverException $e) {
                 // e.g. element is on option
                 $element->sendKeys($value);
@@ -1036,5 +1041,33 @@ class PantherDriver extends CoreDriver
         }
 
         return $modifier;
+    }
+
+    /**
+     * @param WebDriverElement       $element
+     * @param array|bool|string|null $value
+     *
+     * @return void
+     *
+     * @throws DriverException
+     */
+    private function validateValueForElement(WebDriverElement $element, $value): void
+    {
+        $inputType = $element->getAttribute('type');
+        if (is_null($inputType)) {
+            $inputType = $element->getTagName();
+        }
+        $doesNotSupportBool = ['color', 'date', 'email', 'file', 'number', 'radio', 'search', 'submit', 'text', 'textarea', 'time', 'url'];
+        $doesNotSupportString = ['submit'];
+        $doesNotSupportArray = ['textarea', 'color', 'date', 'email', 'file', 'number', 'search', 'submit', 'text', 'textarea', 'time', 'url'];
+        if (is_bool($value) && \in_array($inputType, $doesNotSupportBool ,true)) {
+            throw new DriverException(\sprintf('Invalid boolean value "%s" given. Can not set this value on inputType "%s".', $value, $inputType));
+        }
+        if (is_string($value) && \in_array($inputType, $doesNotSupportString ,true)) {
+            throw new DriverException(\sprintf('Invalid string value "%s" given. Can not set this value on inputType "%s".', $value, $inputType));
+        }
+        if (is_array($value) && \in_array($inputType, $doesNotSupportArray ,true)) {
+            throw new DriverException(\sprintf('Invalid array value "%s" given. Can not set this value on inputType "%s".', \implode(', ', $value), $inputType));
+        }
     }
 }

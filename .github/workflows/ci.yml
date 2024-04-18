@@ -40,8 +40,7 @@ jobs:
       - uses: browser-actions/setup-chrome@latest
       - run: chrome --version
       - name: Add browser drivers
-        run: |
-          vendor/bin/bdi driver:chromedriver drivers
+        uses: nanasess/setup-chromedriver@v2
       - name: Setup Mink test server
         run: |
           mkdir ./logs

@@ -33,13 +33,8 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libpng-dev
 
-RUN if [[ "${PHP_VERSION}" = "7.4*" ]] || [[ "${PHP_VERSION}" = "8.0*" ]]; then \
-    docker-php-ext-configure gd --with-jpeg=/usr/include/ && \
-    docker-php-ext-install gd \
-    ;el \
-    docker-php-ext-configure gd --with-jpeg=/usr/include/ && \
-    docker-php-ext-install gd \
-    ;fi
+RUN docker-php-ext-configure gd --with-jpeg=/usr/include/
+RUN docker-php-ext-install gd
 
 WORKDIR /var/www/html
 COPY . /var/www/html
