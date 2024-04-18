@@ -1,8 +1,13 @@
-vx.x.x / 2022-xx-xx
+vx.x.x / 2024-xx-xx
+===================
+
+v1.1.1 / 2024-04-18
 ===================
 
 Features:
 * Add support for ```PHP 8.2``` #28
+* Adopt code to changes in mink/driver-testsuite #29
+* Add support for ```PHP 8.3``` #30
 
 Misc:
 
