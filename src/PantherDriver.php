@@ -1019,7 +1019,7 @@ class PantherDriver extends CoreDriver
         return $char;
     }
 
-    private function getWebdriverModifierKeyValue(string $modifier = null): ?string
+    private function getWebdriverModifierKeyValue(?string $modifier = null): ?string
     {
         switch ($modifier) {
             case 'alt':
