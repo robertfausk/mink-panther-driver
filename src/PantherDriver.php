@@ -37,7 +37,7 @@ use Symfony\Component\Panther\DomCrawler\Field\TextareaFormField;
 use Symfony\Component\Panther\PantherTestCaseTrait;
 
 /**
- * Symfony2 Panther driver.
+ * Symfony Panther driver.
  *
  * @author Robert Freigang <robertfreigang@gmx.de>
  */
@@ -45,9 +45,11 @@ class PantherDriver extends CoreDriver
 {
     use PantherTestCaseTrait;
 
-    // PantherTestCaseTrait needs this constants; provided via "\Symfony\Component\Panther\PantherTestCase"
+    // PantherTestCaseTrait needs these constants; provided via "\Symfony\Component\Panther\PantherTestCase"
     public const CHROME = 'chrome';
     public const FIREFOX = 'firefox';
+
+    private const W3C_WINDOW_HANDLE_PREFIX = 'w3cwh:';
 
     /** @var Client|null */
     private $client;
@@ -60,6 +62,8 @@ class PantherDriver extends CoreDriver
     private $kernelOptions;
     /** @var array */
     private $managerOptions;
+    /** @var ?string */
+    private $initialWindowHandle = null;
 
     public function __construct(
         array $options = [],
@@ -124,6 +128,7 @@ class PantherDriver extends CoreDriver
     {
         $this->client = self::createPantherClient($this->options, $this->kernelOptions, $this->managerOptions);
         $this->client->start();
+        $this->initialWindowHandle = $this->client->getWebDriver()->getWindowHandle();
 
         $this->started = true;
     }
@@ -232,7 +237,11 @@ class PantherDriver extends CoreDriver
      */
     public function switchToWindow($name = null)
     {
-        $this->getClient()->switchTo()->window($name);
+        $windowHandle = $name === null
+            ? $this->initialWindowHandle
+            : $this->getWindowHandleFromName($name);
+
+        $this->getClient()->switchTo()->window($windowHandle);
     }
 
     /**
@@ -243,7 +252,11 @@ class PantherDriver extends CoreDriver
         if (null === $name) {
             $this->getClient()->switchTo()->defaultContent();
         } elseif ($name) {
-            $iFrameElement = $this->getCrawlerElement($this->getFilteredCrawler(\sprintf("//iframe[@name='%s']", $name)));
+            try {
+                $iFrameElement = $this->getCrawlerElement($this->getFilteredCrawler(\sprintf("//iframe[@name='%s']", $name)));
+            } catch (DriverException $e) {
+                $iFrameElement = $this->getCrawlerElement($this->getFilteredCrawler(\sprintf("//iframe[@id='%s']", $name)));
+            }
             $this->getClient()->switchTo()->frame($iFrameElement);
         } else {
             $this->getClient()->switchTo()->frame(null);
@@ -320,7 +333,7 @@ class PantherDriver extends CoreDriver
      */
     public function isVisible($xpath)
     {
-        return $this->getCrawlerElement($this->getFilteredCrawler($xpath))->isDisplayed();
+        return $this->getElementByXpath($xpath)->isDisplayed();
     }
 
     /**
@@ -328,7 +341,7 @@ class PantherDriver extends CoreDriver
      */
     public function mouseOver($xpath)
     {
-        $this->getClient()->getMouse()->mouseMove($this->toCoordinates($xpath));
+        $this->getClient()->getMouse()->mouseMove($this->getElementByXpath($xpath)->getCoordinates());
     }
 
     /**
@@ -361,7 +374,7 @@ class PantherDriver extends CoreDriver
     public function keyPress($xpath, $char, $modifier = null)
     {
         $webDriverActions = $this->getWebDriverActions();
-        $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
+        $element = $this->getElementByXpath($xpath);
         $key = $this->geWebDriverKeyValue($char);
 
         $modifier = $this->getWebdriverModifierKeyValue($modifier);
@@ -381,7 +394,7 @@ class PantherDriver extends CoreDriver
     public function keyDown($xpath, $char, $modifier = null)
     {
         $webDriverActions = $this->getWebDriverActions();
-        $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
+        $element = $this->getElementByXpath($xpath);
         $key = $this->geWebDriverKeyValue($char);
 
         $modifier = $this->getWebdriverModifierKeyValue($modifier);
@@ -400,7 +413,7 @@ class PantherDriver extends CoreDriver
     public function keyUp($xpath, $char, $modifier = null)
     {
         $webDriverActions = $this->getWebDriverActions();
-        $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
+        $element = $this->getElementByXpath($xpath);
         $key = $this->geWebDriverKeyValue($char);
 
         $modifier = $this->getWebdriverModifierKeyValue($modifier);
@@ -418,7 +431,7 @@ class PantherDriver extends CoreDriver
      */
     public function isSelected($xpath)
     {
-        return $this->getCrawlerElement($this->getFilteredCrawler($xpath))->isSelected();
+        return $this->getElementByXpath($xpath)->isSelected();
     }
 
     /**
@@ -442,7 +455,7 @@ class PantherDriver extends CoreDriver
      */
     public function getTagName($xpath)
     {
-        return $this->getCrawlerElement($this->getFilteredCrawler($xpath))->getTagName();
+        return $this->getElementByXpath($xpath)->getTagName();
     }
 
     /**
@@ -512,7 +525,7 @@ class PantherDriver extends CoreDriver
             }
         } catch (DriverException $e) {
             // e.g. element is an option
-            $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
+            $element = $this->getElementByXpath($xpath);
             $value = $element->getAttribute('value');
         }
 
@@ -524,7 +537,7 @@ class PantherDriver extends CoreDriver
      */
     public function setValue($xpath, $value)
     {
-        $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
+        $element = $this->getElementByXpath($xpath);
         $jsNode = $this->getJsNode($xpath);
 
         $this->validateValueForElement($element, $value);
@@ -595,7 +608,9 @@ class PantherDriver extends CoreDriver
      */
     public function click($xpath)
     {
-        $this->getClient()->getMouse()->click($this->toCoordinates($xpath));
+        $element = $this->getElementByXpath($xpath);
+        $element->getLocationOnScreenOnceScrolledIntoView();
+        $element->click();
     }
 
     /**
@@ -603,7 +618,9 @@ class PantherDriver extends CoreDriver
      */
     public function doubleClick($xpath)
     {
-        $this->getClient()->getMouse()->doubleClick($this->toCoordinates($xpath));
+        $element = $this->getElementByXpath($xpath);
+        $element->getLocationOnScreenOnceScrolledIntoView();
+        $this->getClient()->getMouse()->doubleClick($element->getCoordinates());
     }
 
     /**
@@ -611,7 +628,7 @@ class PantherDriver extends CoreDriver
      */
     public function rightClick($xpath)
     {
-        $this->getClient()->getMouse()->contextClick($this->toCoordinates($xpath));
+        $this->getClient()->getMouse()->contextClick($this->getElementByXpath($xpath)->getCoordinates());
     }
 
     /**
@@ -619,7 +636,7 @@ class PantherDriver extends CoreDriver
      */
     public function isChecked($xpath)
     {
-        return $this->getCrawlerElement($this->getFilteredCrawler($xpath))->isSelected();
+        return $this->getElementByXpath($xpath)->isSelected();
     }
 
     /**
@@ -656,7 +673,7 @@ class PantherDriver extends CoreDriver
     {
         if (\preg_match('/^function[\s\(]/', $script)) {
             $script = \preg_replace('/;$/', '', $script);
-            $script = '('.$script.')';
+            $script = '(' . $script . ')';
         }
 
         return $this->getClient()->executeScript($script);
@@ -668,7 +685,7 @@ class PantherDriver extends CoreDriver
     public function evaluateScript($script)
     {
         if (0 !== \strpos(\trim($script), 'return ')) {
-            $script = 'return '.$script;
+            $script = 'return ' . $script;
         }
 
         return $this->getClient()->executeScript($script);
@@ -746,7 +763,7 @@ class PantherDriver extends CoreDriver
      */
     protected function prepareUrl($url)
     {
-        $replacement = ($this->removeHostFromUrl ? '' : '$1').($this->removeScriptFromUrl ? '' : '$2');
+        $replacement = ($this->removeHostFromUrl ? '' : '$1') . ($this->removeScriptFromUrl ? '' : '$2');
 
         return preg_replace('#(https?\://[^/]+)(/[^/\.]+\.php)?#', $replacement, $url);
     }
@@ -837,7 +854,7 @@ class PantherDriver extends CoreDriver
      */
     private function getChoiceFormField($xpath)
     {
-        $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
+        $element = $this->getElementByXpath($xpath);
         try {
             $choiceFormField = new ChoiceFormField($element);
         } catch (\LogicException $e) {
@@ -864,7 +881,7 @@ class PantherDriver extends CoreDriver
      */
     private function getInputFormField($xpath)
     {
-        $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
+        $element = $this->getElementByXpath($xpath);
         try {
             $inputFormField = new InputFormField($element);
         } catch (\LogicException $e) {
@@ -887,7 +904,7 @@ class PantherDriver extends CoreDriver
      */
     private function getFileFormField($xpath)
     {
-        $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
+        $element = $this->getElementByXpath($xpath);
         try {
             $fileFormField = new FileFormField($element);
         } catch (\LogicException $e) {
@@ -910,7 +927,7 @@ class PantherDriver extends CoreDriver
      */
     private function getTextareaFormField($xpath)
     {
-        $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
+        $element = $this->getElementByXpath($xpath);
         try {
             $textareaFormField = new TextareaFormField($element);
         } catch (\LogicException $e) {
@@ -986,17 +1003,9 @@ class PantherDriver extends CoreDriver
         );
     }
 
-    private function toCoordinates(string $xpath): WebDriverCoordinates
+    private function getElementByXpath(string $xpath): WebDriverElement
     {
-        $element = $this->getCrawlerElement($this->getFilteredCrawler($xpath));
-
-        if (!$element instanceof WebDriverLocatable) {
-            throw new \RuntimeException(
-                sprintf('The element of "%s" xpath selector does not implement "%s".', $xpath, WebDriverLocatable::class)
-            );
-        }
-
-        return $element->getCoordinates();
+        return $this->getCrawlerElement($this->getFilteredCrawler($xpath));
     }
 
     private function getWebDriverActions(): WebDriverActions
@@ -1019,7 +1028,7 @@ class PantherDriver extends CoreDriver
         return $char;
     }
 
-    private function getWebdriverModifierKeyValue(string $modifier = null): ?string
+    private function getWebdriverModifierKeyValue(?string $modifier = null): ?string
     {
         switch ($modifier) {
             case 'alt':
@@ -1060,14 +1069,40 @@ class PantherDriver extends CoreDriver
         $doesNotSupportBool = ['color', 'date', 'email', 'file', 'number', 'radio', 'search', 'submit', 'text', 'textarea', 'time', 'url'];
         $doesNotSupportString = ['submit'];
         $doesNotSupportArray = ['textarea', 'color', 'date', 'email', 'file', 'number', 'search', 'submit', 'text', 'textarea', 'time', 'url'];
-        if (is_bool($value) && \in_array($inputType, $doesNotSupportBool ,true)) {
+        if (is_bool($value) && \in_array($inputType, $doesNotSupportBool, true)) {
             throw new DriverException(\sprintf('Invalid boolean value "%s" given. Can not set this value on inputType "%s".', $value, $inputType));
         }
-        if (is_string($value) && \in_array($inputType, $doesNotSupportString ,true)) {
+        if (is_string($value) && \in_array($inputType, $doesNotSupportString, true)) {
             throw new DriverException(\sprintf('Invalid string value "%s" given. Can not set this value on inputType "%s".', $value, $inputType));
         }
-        if (is_array($value) && \in_array($inputType, $doesNotSupportArray ,true)) {
+        if (is_array($value) && \in_array($inputType, $doesNotSupportArray, true)) {
             throw new DriverException(\sprintf('Invalid array value "%s" given. Can not set this value on inputType "%s".', \implode(', ', $value), $inputType));
+        }
+    }
+
+    /**
+     * @throws DriverException
+     */
+    private function getWindowHandleFromName(string $name): string
+    {
+        // if name is actually prefixed window handle, just remove the prefix
+        if (strpos($name, self::W3C_WINDOW_HANDLE_PREFIX) === 0) {
+            return substr($name, strlen(self::W3C_WINDOW_HANDLE_PREFIX));
+        }
+
+        $origWindowHandle = $this->getClient()->getWindowHandle();
+
+        try {
+            foreach ($this->getClient()->getWindowHandles() as $handle) {
+                $this->getClient()->switchTo()->window($handle);
+                if ($this->evaluateScript('window.name') === $name) {
+                    return $handle;
+                }
+            }
+
+            throw new DriverException("Could not find handle of window named \"$name\"");
+        } finally {
+            $this->getClient()->switchTo()->window($origWindowHandle);
         }
     }
 }
