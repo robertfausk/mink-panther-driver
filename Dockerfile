@@ -21,7 +21,7 @@ RUN if php -r 'exit(version_compare(PHP_VERSION, "8.0", ">=") ? 0 : 1);'; then \
       composer global require "pyrech/composer-changelogs:^2" --prefer-dist --no-progress --classmap-authoritative; \
     else \
       composer global require "pyrech/composer-changelogs:^1" --prefer-dist --no-progress --classmap-authoritative; \
-    fi \
+    fi
 
 ##############################################################
 # add symfony/panther
