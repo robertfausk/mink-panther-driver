@@ -23,6 +23,7 @@ use Facebook\WebDriver\WebDriverDimension;
 use Facebook\WebDriver\WebDriverElement;
 use Facebook\WebDriver\WebDriverHasInputDevices;
 use Facebook\WebDriver\WebDriverKeys;
+use Facebook\WebDriver\WebDriverRadios;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\BrowserKit\Response;
 use Symfony\Component\DomCrawler\Field\FormField;
@@ -517,6 +518,17 @@ class PantherDriver extends CoreDriver
      */
     public function getValue($xpath)
     {
+        $element = $this->getElementByXpath($xpath);
+        // panther does not handle radios correctly
+        if (\in_array($element->getAttribute('type'), ['radio'])) {
+            $radioElement = new WebDriverRadios($element);
+            try {
+                return $radioElement->getFirstSelectedOption()->getAttribute('value');
+            } catch (NoSuchElementException $e) {
+                return null;
+            }
+        }
+
         try {
             $formField = $this->getFormField($xpath);
             $value = $formField->getValue();
@@ -525,7 +537,6 @@ class PantherDriver extends CoreDriver
             }
         } catch (DriverException $e) {
             // e.g. element is an option
-            $element = $this->getElementByXpath($xpath);
             $value = $element->getAttribute('value');
         }
 
