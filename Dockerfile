@@ -17,7 +17,7 @@ ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_HOME /home/docker/.composer
 # contains dev-mode packages
 RUN composer global config --no-plugins allow-plugins.pyrech/composer-changelogs true
-RUN composer global require "pyrech/composer-changelogs:^1.7" --prefer-dist --no-progress --classmap-authoritative
+RUN composer global require "pyrech/composer-changelogs:^1|2" --prefer-dist --no-progress --classmap-authoritative
 
 ##############################################################
 # add symfony/panther
@@ -35,6 +35,8 @@ RUN apt-get update && apt-get install -y \
 
 RUN docker-php-ext-configure gd --with-jpeg=/usr/include/
 RUN docker-php-ext-install gd
+
+RUN composer self-update
 
 WORKDIR /var/www/html
 COPY . /var/www/html

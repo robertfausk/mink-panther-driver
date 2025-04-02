@@ -29,9 +29,9 @@
   ],
   "require": {
     "php": ">=7.2",
+    "ext-dom": "*",
     "behat/mink": "~1.8",
-    "symfony/panther": "~0.7|~1.0|~2.0",
-    "ext-dom": "*"
+    "symfony/panther": "~0.7|~1.0|~2.0"
   },
   "require-dev": {
     "dbrekelmans/bdi": "^1.0",
