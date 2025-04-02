@@ -21,7 +21,7 @@ jobs:
       MATRIX_PHP: ${{ matrix.php }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
       - name: Setup PHP
@@ -56,7 +56,7 @@ jobs:
           files: coverage.xml
       - name: Archive logs artifacts
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: logs_php-${{ matrix.php }}
           path: |
