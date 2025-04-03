@@ -11,8 +11,8 @@ Fixes:
 * Fix `SelectTest::testMultiselect` #9
 
 Features:
-* Add support for ```PHP 8.4``` #32
-* Rely completely on `mink/driver-testsuite` #29
+* Add support for ```PHP 8.4``` #32 (Thx to @codingioanniskrikos)
+* Rely completely on `mink/driver-testsuite` #29 (Thx to @stof)
   *  Fix SessionResetTest
 
 v1.1.1 / 2024-04-18
