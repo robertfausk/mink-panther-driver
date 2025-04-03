@@ -35,9 +35,7 @@
             <file>vendor/mink/driver-testsuite/tests/Form/GeneralTest.php</file>
             <file>vendor/mink/driver-testsuite/tests/Form/Html5Test.php</file>
             <file>vendor/mink/driver-testsuite/tests/Form/RadioTest.php</file>
-            <!--Overwritten cause of some failing tests -->
-<!--            <file>vendor/mink/driver-testsuite/tests/Form/SelectTest.php</file>-->
-            <file>tests/Custom/SelectTest.php</file>
+            <file>vendor/mink/driver-testsuite/tests/Form/SelectTest.php</file>
             <file>vendor/mink/driver-testsuite/tests/Js/ChangeEventTest.php</file>
             <!--Overwritten cause of some failing tests -->
 <!--            <file>vendor/mink/driver-testsuite/tests/Js/EventsTest.php</file>-->

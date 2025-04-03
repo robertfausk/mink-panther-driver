@@ -611,7 +611,13 @@ class PantherDriver extends CoreDriver
             );
         }
 
-        $field->select($value);
+        try {
+            $field->select($value);
+        } catch (NoSuchElementException $e) {
+            // we get hacky can be removed after merge of https://github.com/symfony/panther/pull/550
+            $selector = \Closure::bind(fn() => $this->selector, $field, get_class($field))();
+            $selector->selectByVisibleText($value);
+        }
     }
 
     /**
