@@ -535,6 +535,9 @@ class PantherDriver extends CoreDriver
             if (null === $value && $formField instanceof ChoiceFormField) {
                 $value = '';
             }
+            if ('' === $value && $formField instanceof ChoiceFormField && 'checkbox' === $formField->getType()) {
+                $value = null;
+            }
         } catch (DriverException $e) {
             // e.g. element is an option
             $value = $element->getAttribute('value');
