@@ -558,6 +558,11 @@ class PantherDriver extends CoreDriver
         } else {
             try {
                 $formField = $this->getFormField($xpath);
+                if ($formField instanceof ChoiceFormField && $formField->isMultiple()) {
+                    // we get hacky; can be removed after merge of https://github.com/symfony/panther/pull/526
+                    $selector = \Closure::bind(fn() => $this->selector, $formField, get_class($formField))();
+                    $selector->deselectAll();
+                }
                 $formField->setValue($value);
             } catch (NoSuchElementException | \InvalidArgumentException $e) {
                 throw new DriverException($e->getMessage(), 0, $e);
