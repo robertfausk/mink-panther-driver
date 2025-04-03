@@ -1,5 +1,19 @@
-vx.x.x / 2024-xx-xx
+vx.x.x / 2025-xx-xx
 ===================
+
+v1.1.2 / 2025-04-03
+===================
+
+Fixes:
+* Fix `Html5Test::testHtml5FormRadioAttribute` #6
+* Fix `SelectTest::testOptionWithoutValue` #7
+* Fix `SelectTest::testSetValueMultiSelect` #8
+* Fix `SelectTest::testMultiselect` #9
+
+Features:
+* Add support for ```PHP 8.4``` #32
+* Rely completely on `mink/driver-testsuite` #29
+  *  Fix SessionResetTest
 
 v1.1.1 / 2024-04-18
 ===================
