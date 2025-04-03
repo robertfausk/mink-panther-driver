@@ -560,11 +560,13 @@ class PantherDriver extends CoreDriver
                 $formField = $this->getFormField($xpath);
                 if ($formField instanceof ChoiceFormField && $formField->isMultiple()) {
                     // we get hacky; can be removed after merge of https://github.com/symfony/panther/pull/526
-                    $selector = \Closure::bind(fn() => $this->selector, $formField, get_class($formField))();
+                    $selector = \Closure::bind(function () {
+                        return $this->selector;
+                    }, $formField, get_class($formField))();
                     $selector->deselectAll();
                 }
                 $formField->setValue($value);
-            } catch (NoSuchElementException | \InvalidArgumentException $e) {
+            } catch (NoSuchElementException|\InvalidArgumentException $e) {
                 throw new DriverException($e->getMessage(), 0, $e);
             } catch (DriverException $e) {
                 // e.g. element is on option
@@ -617,7 +619,9 @@ class PantherDriver extends CoreDriver
         }
         if (!$multiple && $field->isMultiple()) {
             // we get hacky; can be removed after merge of https://github.com/symfony/panther/pull/526
-            $selector = \Closure::bind(fn() => $this->selector, $field, get_class($field))();
+            $selector = \Closure::bind(function () {
+                return $this->selector;
+            }, $field, get_class($field))();
             $selector->deselectAll();
         }
 
@@ -625,7 +629,9 @@ class PantherDriver extends CoreDriver
             $field->select($value);
         } catch (NoSuchElementException $e) {
             // we get hacky; can be removed after merge of https://github.com/symfony/panther/pull/550
-            $selector = \Closure::bind(fn() => $this->selector, $field, get_class($field))();
+            $selector = \Closure::bind(function () {
+                return $this->selector;
+            }, $field, get_class($field))();
             $selector->selectByVisibleText($value);
         }
     }
