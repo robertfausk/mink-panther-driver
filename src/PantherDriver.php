@@ -532,8 +532,8 @@ class PantherDriver extends CoreDriver
         try {
             $formField = $this->getFormField($xpath);
             $value = $formField->getValue();
-            if ('' === $value && $formField instanceof ChoiceFormField) {
-                $value = null;
+            if (null === $value && $formField instanceof ChoiceFormField) {
+                $value = '';
             }
         } catch (DriverException $e) {
             // e.g. element is an option
@@ -610,11 +610,16 @@ class PantherDriver extends CoreDriver
                 )
             );
         }
+        if (!$multiple && $field->isMultiple()) {
+            // we get hacky; can be removed after merge of https://github.com/symfony/panther/pull/526
+            $selector = \Closure::bind(fn() => $this->selector, $field, get_class($field))();
+            $selector->deselectAll();
+        }
 
         try {
             $field->select($value);
         } catch (NoSuchElementException $e) {
-            // we get hacky can be removed after merge of https://github.com/symfony/panther/pull/550
+            // we get hacky; can be removed after merge of https://github.com/symfony/panther/pull/550
             $selector = \Closure::bind(fn() => $this->selector, $field, get_class($field))();
             $selector->selectByVisibleText($value);
         }
