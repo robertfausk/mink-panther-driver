@@ -12,36 +12,7 @@
     <testsuites>
         <testsuite name="Driver test suite">
             <directory>./tests</directory>
-        </testsuite>
-        <testsuite name="Functional tests">
-            <!--Not working cause of server parameters are not allowed in webdriver-->
-            <!--<file>vendor/mink/driver-testsuite/tests/Basic/BasicAuthTest.php</file>-->
-            <file>vendor/mink/driver-testsuite/tests/Basic/BestPracticesTest.php</file>
-            <file>vendor/mink/driver-testsuite/tests/Basic/ContentTest.php</file>
-            <file>vendor/mink/driver-testsuite/tests/Basic/CookieTest.php</file>
-            <file>vendor/mink/driver-testsuite/tests/Basic/ErrorHandlingTest.php</file>
-            <!--Not working cause not possible with webdriver-->
-            <!--<file>vendor/mink/driver-testsuite/tests/Basic/HeaderTest.php</file>-->
-            <file>vendor/mink/driver-testsuite/tests/Basic/IFrameTest.php</file>
-            <file>vendor/mink/driver-testsuite/tests/Basic/NavigationTest.php</file>
-            <file>vendor/mink/driver-testsuite/tests/Basic/ScreenshotTest.php</file>
-            <!--Not supported by webdriver-->
-            <!--<file>vendor/mink/driver-testsuite/tests/Basic/StatusCodeTest.php</file>-->
-            <file>vendor/mink/driver-testsuite/tests/Basic/TraversingTest.php</file>
-            <directory>vendor/mink/driver-testsuite/tests/Css</directory>
-            <file>vendor/mink/driver-testsuite/tests/Form/CheckboxTest.php</file>
-            <file>vendor/mink/driver-testsuite/tests/Form/GeneralTest.php</file>
-            <file>vendor/mink/driver-testsuite/tests/Form/Html5Test.php</file>
-            <file>vendor/mink/driver-testsuite/tests/Form/RadioTest.php</file>
-            <file>vendor/mink/driver-testsuite/tests/Form/SelectTest.php</file>
-            <file>vendor/mink/driver-testsuite/tests/Js/ChangeEventTest.php</file>
-            <!--Overwritten cause of some failing tests -->
-<!--            <file>vendor/mink/driver-testsuite/tests/Js/EventsTest.php</file>-->
-            <file>tests/Custom/EventsTest.php</file>
-            <file>vendor/mink/driver-testsuite/tests/Js/JavascriptEvaluationTest.php</file>
-            <file>vendor/mink/driver-testsuite/tests/Js/JavascriptTest.php</file>
-            <file>vendor/mink/driver-testsuite/tests/Js/WindowTest.php</file>
-
+            <directory>vendor/mink/driver-testsuite/tests</directory>
         </testsuite>
     </testsuites>
 

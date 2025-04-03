@@ -12,7 +12,7 @@
 [![Open Issues](https://img.shields.io/github/issues-raw/robertfausk/mink-panther-driver?style=flat)](https://github.com/robertfausk/mink-panther-driver/issues)
 [![Closed Issues](https://img.shields.io/github/issues-closed-raw/robertfausk/mink-panther-driver?style=flat)](https://github.com/robertfausk/mink-panther-driver/issues?q=is%3Aissue+is%3Aclosed)
 [![Contributors](https://img.shields.io/github/contributors/robertfausk/mink-panther-driver?style=flat)](https://github.com/robertfausk/mink-panther-driver/graphs/contributors)
-![Contributors](https://img.shields.io/maintenance/yes/2024?style=flat)
+![Contributors](https://img.shields.io/maintenance/yes/2027?style=flat)
 [![Dependents](http://poser.pugx.org/robertfausk/mink-panther-driver/dependents)](https://packagist.org/packages/robertfausk/mink-panther-driver/dependents)
 
 

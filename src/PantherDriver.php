@@ -155,40 +155,27 @@ class PantherDriver extends CoreDriver
      */
     public function reset()
     {
-        // experimental
-        // $useSpeedUp = false;
-        $useSpeedUp = true;
-        if ($useSpeedUp) {
-            $this->getClient()->getWebDriver()->manage()->deleteAllCookies();
-            try {
-                $history = $this->getClient()->getHistory();
-                if ($history) {
-                    $history->clear();
-                }
-            } catch (\LogicException $e) {
-                // History is not available when using e.g. WebDriver.
+        $webDriver = $this->getClient()->getWebDriver();
+        foreach ($webDriver->getWindowHandles() as $windowHandle) {
+            if ($windowHandle === $this->initialWindowHandle) {
+                continue;
             }
-            if (
-                $this->getClient()->getWebDriver() instanceof JavaScriptExecutor
-                && !in_array($this->getClient()->getCurrentURL(), ['', 'about:blank', 'data:,'], true)
-            ) {
-                $this->executeScript('localStorage.clear();');
-            }
-            // not sure if we should also close all windows
-            // $lastWindowHandle = \end($this->getClient()->getWindowHandles());
-            // if ($lastWindowHandle) {
-            //     $this->getClient()->switchTo()->window($lastWindowHandle);
-            // }
-            // $this->getClient()->getWebDriver()->navigate()->refresh();
-            // $this->getClient()->refreshCrawler();
-            // if (\count($this->getClient()->getWindowHandles()) > 1) {
-            //     $this->getClient()->getWebDriver()->close();
-            // }
-        } else {
-            // Restarting the client resets the cookies and the history
-            $this->getClient()->restart();
-        }
 
+            $webDriver->switchTo()->window($windowHandle)->close();
+        }
+        $this->switchToWindow();
+        $this->getClient()->getWebDriver()->manage()->deleteAllCookies();
+        try {
+            $this->getClient()->getHistory()->clear();
+        } catch (\LogicException $e) {
+            // History is not available when using e.g. WebDriver.
+        }
+        if (
+            $this->getClient()->getWebDriver() instanceof JavaScriptExecutor
+            && !in_array($this->getClient()->getCurrentURL(), ['', 'about:blank', 'data:,'], true)
+        ) {
+            $this->executeScript('localStorage.clear();');
+        }
     }
 
     /**
