@@ -29,9 +29,7 @@
             <!--<file>vendor/mink/driver-testsuite/tests/Basic/StatusCodeTest.php</file>-->
             <file>vendor/mink/driver-testsuite/tests/Basic/TraversingTest.php</file>
             <directory>vendor/mink/driver-testsuite/tests/Css</directory>
-            <!--Overwritten cause of some failing tests -->
-<!--            <file>vendor/mink/driver-testsuite/tests/Form/CheckboxTest.php</file>-->
-            <file>tests/Custom/CheckboxTest.php</file>
+            <file>vendor/mink/driver-testsuite/tests/Form/CheckboxTest.php</file>
             <file>vendor/mink/driver-testsuite/tests/Form/GeneralTest.php</file>
             <file>vendor/mink/driver-testsuite/tests/Form/Html5Test.php</file>
             <file>vendor/mink/driver-testsuite/tests/Form/RadioTest.php</file>

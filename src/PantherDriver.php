@@ -520,7 +520,7 @@ class PantherDriver extends CoreDriver
     {
         $element = $this->getElementByXpath($xpath);
         // panther does not handle radios correctly
-        if (\in_array($element->getAttribute('type'), ['radio'])) {
+        if ('radio' === $element->getAttribute('type')) {
             $radioElement = new WebDriverRadios($element);
             try {
                 return $radioElement->getFirstSelectedOption()->getAttribute('value');
@@ -528,15 +528,16 @@ class PantherDriver extends CoreDriver
                 return null;
             }
         }
+        // FormField handles checkboxes always as group
+        if ('checkbox' === $element->getAttribute('type')) {
+            return $element->isSelected() ? $element->getAttribute('value') : null;
+        }
 
         try {
             $formField = $this->getFormField($xpath);
             $value = $formField->getValue();
             if (null === $value && $formField instanceof ChoiceFormField) {
                 $value = '';
-            }
-            if ('' === $value && $formField instanceof ChoiceFormField && 'checkbox' === $formField->getType()) {
-                $value = null;
             }
         } catch (DriverException $e) {
             // e.g. element is an option
