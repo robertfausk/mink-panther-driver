@@ -9,55 +9,57 @@ defaults:
     shell: bash
 
 jobs:
-
   tests:
-    name: Tests
-    runs-on: ubuntu-20.04
+    name: PHP ${{ matrix.php }}
+    runs-on: ubuntu-24.04
+
     strategy:
+      fail-fast: false
       matrix:
         php: [ '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5' ]
-      fail-fast: false
-    env:
-      MATRIX_PHP: ${{ matrix.php }}
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
+      - uses: actions/checkout@v4
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
-        env:
-          COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          coverage: "xdebug"
-          php-version: "${{ matrix.php }}"
+          php-version: ${{ matrix.php }}
+          coverage: xdebug
           extensions: gd, zip
-          tools: composer
-          ini-values: error_reporting=-1, display_errors=On
+          tools: composer:v2
+          ini-values: |
+            error_reporting=-1
+            display_errors=On
+
       - name: Install dependencies
-        run: |
-          composer install --no-interaction --no-scripts --no-progress --prefer-dist
-      - uses: browser-actions/setup-chrome@latest
-      - run: chrome --version
-      - name: Add browser drivers
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Show Chrome version
+        run: chrome --version
+
+      - name: Setup Chromedriver
         uses: nanasess/setup-chromedriver@v2
-      - name: Setup Mink test server
+
+      - name: Start Mink test server
         run: |
-          mkdir ./logs
-          ./vendor/bin/mink-test-server &> ./logs/mink-test-server.log &
-      - name: Remove preinstalled chromedriver bin from ubuntu
-        run: sudo rm -rf /usr/local/share/chrome_driver
-      - name: Run tests
-        run: |
-          vendor/bin/phpunit -v --coverage-clover=coverage.xml
+          mkdir -p logs
+          ./vendor/bin/mink-test-server > logs/mink-test-server.log 2>&1 &
+
+      - name: Run PHPUnit
+        run: vendor/bin/phpunit --coverage-clover=coverage.xml
+
       - name: Upload coverage
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v5
         with:
           files: coverage.xml
-      - name: Archive logs artifacts
-        if: ${{ failure() }}
+
+      - name: Upload logs
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: logs_php-${{ matrix.php }}
-          path: |
-            logs
+          name: logs-php-${{ matrix.php }}
+          path: logs
